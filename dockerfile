@@ -2,7 +2,9 @@ ARG PYTHON_VERSION=3.9
 # Python build stage
 FROM python:${PYTHON_VERSION}-slim-bullseye as python_build
 WORKDIR /opt/venv
-RUN apt-get update && apt-get install -y gcc python3-dev --no-install-recommends
+RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 COPY  ./src/requirements.txt .
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
@@ -14,10 +16,13 @@ FROM  python_build as python_install
 # Use buildkit to cache pip dependencies
 # https://pythonspeed.com/articles/docker-cache-pip-downloads/
 RUN --mount=type=cache,target=/root/.cache \ 
-        $VIRTUAL_ENV/bin/python3 -m pip install -U --no-cache-dir -r requirements.txt --prefer-binary -v 
+        $VIRTUAL_ENV/bin/python3 -m pip install -U --no-cache-dir -r requirements.txt --prefer-binary -v && \
+        apt-get purge -y --auto-remove gcc python3-dev && \
+        rm -rf /var/lib/apt/lists/* && \
+        apt-get clean
 # Final stage 
 # FROM gcr.io/distroless/python3-debian11:debug
-FROM gcr.io/distroless/python3-debian11
+FROM gcr.io/distroless/python3-debian11:debug
 ENV PYTHON_VERSION=3.9
 COPY  ./src /opt/venv
 COPY --from=python_install /opt/venv/ /opt/venv/

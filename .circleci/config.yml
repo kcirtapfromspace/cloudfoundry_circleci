@@ -53,6 +53,7 @@ jobs:
           command: |
             TAG="0.1.${CIRCLE_BUILD_NUM}"
             CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert \
+              -k 5G \
               --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest \
               --docker-username $GITHUB_USERNAME \
               --no-route \
@@ -82,7 +83,7 @@ jobs:
       - run:
           name: Deploy to Cloud Foundry
           command: |
-            cf run-task Python_Bert "python3 /app/bert_model.py"
+            cf run-task Python_Bert --start-command "python3 cleaned_bert_similarity.py"
 
 
       # - run:
