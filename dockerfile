@@ -3,7 +3,7 @@ ARG PYTHON_VERSION=3.9
 FROM python:${PYTHON_VERSION}-slim-bullseye as python_build
 WORKDIR /opt/venv
 RUN apt-get update && apt-get install -y gcc python3-dev --no-install-recommends
-COPY  ./ops/dev-stack/py_app/src/requirements.txt .
+COPY  ./src/requirements.txt .
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python3 -m venv $VIRTUAL_ENV && \
@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache \
 # FROM gcr.io/distroless/python3-debian11:debug
 FROM gcr.io/distroless/python3-debian11
 ENV PYTHON_VERSION=3.9
-COPY  ./ops/dev-stack/py_app/src /opt/venv
+COPY  ./src /opt/venv
 COPY --from=python_install /opt/venv/ /opt/venv/
 COPY --from=python_install /usr/lib/ /usr/lib/
 ENV SPARK_HOME=/opt
