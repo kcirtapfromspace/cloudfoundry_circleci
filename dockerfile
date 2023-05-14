@@ -17,7 +17,7 @@ FROM  python_build as python_install
 # https://pythonspeed.com/articles/docker-cache-pip-downloads/
 RUN --mount=type=cache,target=/root/.cache \ 
     $VIRTUAL_ENV/bin/pip install torch==1.9.1+cpu torchvision==0.10.1+cpu torchaudio===0.9.1 -f https://download.pytorch.org/whl/torch_stable.html && \
-    $VIRTUAL_ENV/bin/pip install -U sentence-transformers psycopg2 && \
+    $VIRTUAL_ENV/bin/pip install -U sentence-transformers psycopg2-binary && \
     apt-get purge -y --auto-remove gcc python3-dev && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
@@ -31,7 +31,10 @@ FROM gcr.io/distroless/python3-debian11:debug
 ENV PYTHON_VERSION=3.9
 COPY  ./src/*.py /opt/venv/
 COPY --from=python_install /opt/venv/ /opt/venv/
-COPY --from=python_install /usr/lib/ /usr/lib/
+COPY --from=python_install /opt/venv/bin/ /usr/bin/
+COPY --from=python_install /opt/venv/lib/python${PYTHON_VERSION}/site-packages/ /usr/lib/python${PYTHON_VERSION}}/site-packages/
+COPY --from=python_install /opt/venv/lib/python3.x/ /usr/lib/python${PYTHON_VERSION}/
+
 ENV SPARK_HOME=/opt
 ENV PATH=$PATH:/opt/bin
 ENV PATH /opt/venv/bin:$PATH
