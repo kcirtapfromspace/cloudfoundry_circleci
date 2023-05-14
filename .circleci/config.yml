@@ -1,7 +1,17 @@
-version: 2
+version: 2.1
+
+executors:
+  base-executor:
+    docker:
+      - image: cimg/base:2023.05
+        auth:
+          username: $GITHUB_USERNAME
+          password: $GITHUB_PAT  # context / project UI env-var reference
+    working_directory: /tmp
+
 jobs:
   deploy:
-    executor: docker-executor
+    executor: base-executor
     steps:
       - attach_workspace:
           at: .
@@ -16,12 +26,12 @@ jobs:
             sudo apt-get install cf8-cli
   build:
     # resource_class: small # specify a resource class
-    docker:
-      # using custom image, see .circleci/images/primary/Dockerfile
-      - image: cimg/base:2023.05
+    executor: base-executor
     environment:
       TEST_RESULTS: /tmp/test-results
     steps:
+      - attach_workspace:
+          at: .
       - checkout  
       - setup_remote_docker:
           docker_layer_caching: true
