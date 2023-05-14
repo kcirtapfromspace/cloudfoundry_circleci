@@ -4,7 +4,8 @@
 ## Prerequisites
 ### Cloud Foundry CLI (SAP 90 day trial)
 Get a free trial account on SAP Cloud Platform
-https://developers.sap.com/tutorials/hcp-create-trial-account.html
+https://developers.sap.com/tutorials/hcp-cre
+ate-trial-account.html
 
 Grab Cloud Foundry Envionment details
 API Endpoint: [https://api.cf.us10-001.hana.ondemand.com](https://api.cf.us10-001.hana.ondemand.com)
@@ -103,3 +104,60 @@ $ cf bind-service cloudfoundry_circleci pg-instance-trial-key
 [github circleci auth]: https://medium.com/@praveena.vennakula/github-circleci-authentication-ef1e85d24b0
 [cloud foundry trial account]: https://developers.sap.com/tutorials/hcp-create-trial-account.html
 [circle ci]: https://circleci.com/signup/
+
+## Iage size
+NOTE:
+The total size of the Docker image file system layers must not exceed the disk quota for the app. The maximum disk allocation for apps is set by the Cloud Controller. The default maximum disk quota is 2048 MB per app.
+### Cloud Foundry
+```
+...
+   Collecting psycopg2-binary
+   Downloading psycopg2_binary-2.9.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.0/3.0 MB 96.2 MB/s eta 0:00:00
+   Collecting pandas
+   Downloading pandas-2.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.3/12.3 MB 101.0 MB/s eta 0:00:00
+   Collecting sentence-transformers
+   Downloading sentence-transformers-2.2.2.tar.gz (85 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.0/86.0 kB 11.5 MB/s eta 0:00:00
+   Preparing metadata (setup.py): started
+   Preparing metadata (setup.py): finished with status 'done'
+   Collecting joblib>=1.1.1
+   Downloading joblib-1.2.0-py3-none-any.whl (297 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 298.0/298.0 kB 33.7 MB/s eta 0:00:00
+   Collecting scipy>=1.3.2
+   Downloading scipy-1.10.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (34.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.4/34.4 MB 54.3 MB/s eta 0:00:00
+   Collecting threadpoolctl>=2.0.0
+   Downloading threadpoolctl-3.1.0-py3-none-any.whl (14 kB)
+   Collecting numpy>=1.17.3
+   Downloading numpy-1.24.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.3/17.3 MB 77.9 MB/s eta 0:00:00
+   Collecting pytz>=2020.1
+   Downloading pytz-2023.3-py2.py3-none-any.whl (502 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.3/502.3 kB 46.0 MB/s eta 0:00:00
+   Collecting python-dateutil>=2.8.2
+   Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 33.5 MB/s eta 0:00:00
+   Collecting tzdata>=2022.1
+   Downloading tzdata-2023.3-py2.py3-none-any.whl (341 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 341.8/341.8 kB 38.9 MB/s eta 0:00:00
+   Collecting transformers<5.0.0,>=4.6.0
+   Downloading transformers-4.29.1-py3-none-any.whl (7.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.1/7.1 MB 110.3 MB/s eta 0:00:00
+   Collecting tqdm
+   Downloading tqdm-4.65.0-py3-none-any.whl (77 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 77.1/77.1 kB 15.7 MB/s eta 0:00:00
+   Collecting torch>=1.6.0
+   Downloading torch-2.0.1-cp310-cp310-manylinux1_x86_64.whl (619.9 MB)
+   **ERROR** Could not install pip packages: could not run pip: signal: killed
+   Failed to compile droplet: Failed to run all supply scripts: exit status 14
+   Exit status 223 (out of memory)
+   Cell e9aa27aa-5635-4e65-b14a-0ae5b04d7d5f stopping instance cb305155-1607-44ae-85b6-b6c1c768df36
+   Cell e9aa27aa-5635-4e65-b14a-0ae5b04d7d5f destroying container for instance cb305155-1607-44ae-85b6-b6c1c768df36
+StagingError - Staging error: staging failed
+FAILED
+```
+
+### Docker image size
+```
