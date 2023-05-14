@@ -27,11 +27,7 @@ jobs:
   build:
     # resource_class: small # specify a resource class
     executor: base-executor
-    environment:
-      TEST_RESULTS: /tmp/test-results
     steps:
-      - attach_workspace:
-          at: .
       - checkout  
       - setup_remote_docker:
           docker_layer_caching: true
@@ -44,9 +40,3 @@ jobs:
             docker build -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG .
             echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: raw-test-output
-
-      - store_test_results:
-          path: /tmp/test-results
