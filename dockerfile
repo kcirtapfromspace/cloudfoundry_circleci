@@ -13,6 +13,7 @@ RUN python3 -m venv $VIRTUAL_ENV && \
     $VIRTUAL_ENV/bin/pip install --upgrade pip setuptools wheel psutil
 # Python install stage
 FROM  python_build as python_install
+WORKDIR /opt/venv
 # Use buildkit to cache pip dependencies
 # https://pythonspeed.com/articles/docker-cache-pip-downloads/
 RUN --mount=type=cache,target=/root/.cache \ 
