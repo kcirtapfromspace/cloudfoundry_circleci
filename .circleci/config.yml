@@ -1,6 +1,7 @@
 version: 2
 jobs:
   build:
+    resource_class: small # specify a resource class
     docker:
       # using custom image, see .circleci/images/primary/Dockerfile
       - image: cimg/base:2023.05
@@ -14,6 +15,9 @@ jobs:
       - run:
           name: Build and push Docker image
           command: |
+            apt-get update && apt-get install -y \
+              tree \
+            tree -L 2
             TAG="0.1.${CIRCLE_BUILD_NUM}"
             docker build -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG .
             echo $GITHUB_PAT | docker login ghcr.io -u GITHUB_USERNAME --password-stdin
