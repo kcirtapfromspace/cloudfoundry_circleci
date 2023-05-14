@@ -1,5 +1,15 @@
 version: 2
 jobs:
+  deploy:
+    executor: docker-executor
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install Cloud Foundry
+          command: |
+            curl -v -L -o cf-cli_amd64.deb 'https://packages.cloudfoundry.org/stable?release=debian64&version=v7&source=github'
+            sudo dpkg -i cf-cli_amd64.deb
   build:
     # resource_class: small # specify a resource class
     docker:
