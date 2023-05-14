@@ -1,20 +1,38 @@
+import os
+import json
+import psycopg2
 import pandas as pd
+import pandas.io.sql as sqlio
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-
 model = SentenceTransformer('bert-base-nli-mean-tokens')
-df = pd.read_csv('')
 
-#get the grant number
-#cur_grant = df.at[0,'grant_number']
-cur_grant = ''
-#get the data frame for that grant
-cur_who_grant_df = df.loc[df['grant_number'] == cur_grant]
-#want all the goals from that grant
-cur_goals_list = list(cur_who_grant_df["goal text"])
-cur_goal_ids = list(cur_who_grant_df["goal_id"])
 alpha = 0.9
+
+def get_postgres_service():
+    # Extract VCAP_SERVICES
+    vcap_services_str = os.environ.get('VCAP_SERVICES')
+    if vcap_services_str is None:
+        raise Exception('VCAP_SERVICES environment variable not found.')
+    vcap_services = json.loads(vcap_services_str)
+
+    # Extract PostgreSQL service details
+    return vcap_services['postgresql-db'][0]['credentials']
+
+def connect_to_db():
+    postgres_service = get_postgres_service()
+
+    # Connect to the PostgreSQL database
+    conn = psycopg2.connect(
+        host=postgres_service['hostname'],
+        port=postgres_service['port'],
+        user=postgres_service['username'],
+        password=postgres_service['password'],
+        dbname=postgres_service['dbname'],
+
+    )
+    return conn
 
 #Function that will take a list of goals and goal ids and output the similar goals
 def my_calc_similarity(list_of_goals, list_of_ids):
@@ -38,5 +56,13 @@ def my_calc_similarity(list_of_goals, list_of_ids):
             print("Potential Match: Goals ", j," and ", cur_potential_idx[k])
             print("Potential Match: Goal ", j, ": ", list_of_goals[j],". and Goal ", cur_potential_idx[k],": ", list_of_goals[cur_potential_idx[k]])
     return(match_goal_ids)
+
+
+conn = connect_to_db()
+sql = "SELECT * FROM public.goals;"
+df = sqlio.read_sql_query(sql, conn)
+
+cur_goals_list = list(df["goal"])
+cur_goal_ids = list(df["id"])
 
 match_ids = my_calc_similarity(cur_goals_list,cur_goal_ids)

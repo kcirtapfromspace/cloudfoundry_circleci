@@ -1,0 +1,7 @@
+psycopg2-binary
+Faker
+flask
+uuid
+cfenv
+hdbcli
+

@@ -1,0 +1,8 @@
+---
+applications:
+- name: datagen
+  random-route: true
+  path: ./
+  buildpacks: python_buildpack
+  services:
+  - postgresql-db
