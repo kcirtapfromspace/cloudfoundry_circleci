@@ -8,6 +8,9 @@ jobs:
       TEST_RESULTS: /tmp/test-results
     steps:
       - checkout  
+      - setup_remote_docker:
+          docker_layer_caching: true
+          
       - run:
           name: Build and push Docker image
           command: |
