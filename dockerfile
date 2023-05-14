@@ -17,7 +17,7 @@ FROM  python_build as python_install
 # https://pythonspeed.com/articles/docker-cache-pip-downloads/
 RUN --mount=type=cache,target=/root/.cache \ 
     $VIRTUAL_ENV/bin/pip install torch==1.9.1+cpu torchvision==0.10.1+cpu torchaudio===0.9.1 -f https://download.pytorch.org/whl/torch_stable.html && \
-    $VIRTUAL_ENV/bin/pip install -U sentence-transformers && \
+    $VIRTUAL_ENV/bin/pip install -U sentence-transformers psycopg2-binary && \
     apt-get purge -y --auto-remove gcc python3-dev && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
