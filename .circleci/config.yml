@@ -10,7 +10,7 @@ executors:
     # working_directory: /tmp
 
 jobs:
-  build:
+  build_bert_model:
     # resource_class: small # specify a resource class
     executor: base-executor
     steps:
@@ -26,9 +26,15 @@ jobs:
             docker build -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG .
             echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
-  deploy:
+  deploy_cloud_foundry:
     executor: base-executor
+    environment:
+      CF_USERNAME: &cf-username $CF_USERNAME
+      CF_PASSWORD: &cf-password $CF_PASSWORD
+      CF_ORG: &cf-org $CF_ORG
+      CF_SPACE: &cf-space $CF_SPACE
     steps:
+
       - attach_workspace:
           at: .
       - run:
@@ -40,14 +46,33 @@ jobs:
             # ...then, update your local package index, then finally install the cf CLI
             sudo apt-get update
             sudo apt-get install cf8-cli
+      - run:
+          name: Login to Cloud Foundry
+          command: |
+            cf login -a https://api.cf.us10-001.hana.ondemand.com -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s $CF_SPACE
+      - run:
+          name: Deploy to Cloud Foundry
+          command: |
+            TAG="0.1.${CIRCLE_BUILD_NUM}"
+            CF_DOCKER_PASSWORD=$GITHUB_PAT cf run-task Python_Bert --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG --docker-username $GITHUB_USERNAME
+
+      # - run:
+      #     name: Check deployed app
+      #     command: |
+      #       curl -s -o /dev/null -w "%{http_code}" https://cloudfoundry-circleci.cfapps.io/
+      # - run:  
+      #     name: Delete old app
+      #     command: |
+      #       cf delete -f cloudfoundry-circleci-old
+      
 
 workflows:
   my-workflow:
     jobs:
-      - build
-      - deploy:
+      - build_bert_model
+      - deploy_cloud_foundry:
           requires:
-            - build
+            - build_bert_model
           filters:
             branches:
               only: master
