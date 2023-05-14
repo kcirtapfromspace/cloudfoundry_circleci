@@ -50,7 +50,7 @@ jobs:
           name: Deploy to Cloud Foundry
           command: |
             TAG="0.1.${CIRCLE_BUILD_NUM}"
-            CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG --docker-username $GITHUB_USERNAME
+            CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest --docker-username $GITHUB_USERNAME
 
       # - run:
       #     name: Check deployed app
