@@ -52,7 +52,38 @@ jobs:
           name: Deploy to Cloud Foundry
           command: |
             TAG="0.1.${CIRCLE_BUILD_NUM}"
-            CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest --docker-username $GITHUB_USERNAME
+            CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert \
+              --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest \
+              --docker-username $GITHUB_USERNAME \
+              --no-route \
+              --no-start 
+
+
+# Cron job to run every night at UTC (1am EST)\
+  cron_task:
+    executor: base-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install Cloud Foundry
+          command: |
+            # ...first add the Cloud Foundry Foundation public key and package repository to your system
+            wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+            echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+            # ...then, update your local package index, then finally install the cf CLI
+            sudo apt-get update
+            sudo apt-get install cf8-cli
+      - run:
+          name: Login to Cloud Foundry
+          command: |
+            cf login -a $CF_API -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s $CF_SPACE
+      - run:
+          name: Deploy to Cloud Foundry
+          command: |
+            cf run-task Python_Bert "python3 /app/bert_model.py"
+
 
       # - run:
       #     name: Check deployed app
