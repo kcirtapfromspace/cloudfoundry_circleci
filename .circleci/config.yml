@@ -4,7 +4,6 @@ jobs:
     docker:
       # using custom image, see .circleci/images/primary/Dockerfile
       - image: cimg/base:2023.05
-    working_directory: /
     environment:
       TEST_RESULTS: /tmp/test-results
     steps:
