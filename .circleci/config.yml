@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    resource_class: small # specify a resource class
+    # resource_class: small # specify a resource class
     docker:
       # using custom image, see .circleci/images/primary/Dockerfile
       - image: cimg/base:2023.05
