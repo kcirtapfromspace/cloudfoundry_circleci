@@ -4,9 +4,9 @@ executors:
   base-executor:
     docker:
       - image: cimg/base:2023.05
-        auth:
-          username: $GITHUB_USERNAME
-          password: $GITHUB_PAT  # context / project UI env-var reference
+        # auth:
+        #   username: $GITHUB_USERNAME
+        #   password: $GITHUB_PAT  # context / project UI env-var reference
     working_directory: /tmp
 
 jobs:
