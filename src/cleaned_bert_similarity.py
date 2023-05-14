@@ -1,8 +1,7 @@
 import os
 import json
 import psycopg2
-import pandas as pd
-import pandas.io.sql as sqlio
+import psycopg2.extras
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -59,10 +58,11 @@ def my_calc_similarity(list_of_goals, list_of_ids):
 
 
 conn = connect_to_db()
-sql = "SELECT * FROM public.goals;"
-df = sqlio.read_sql_query(sql, conn)
+cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+cur.execute("SELECT * FROM public.goals;")
+rows = cur.fetchall()
 
-cur_goals_list = list(df["goal"])
-cur_goal_ids = list(df["id"])
+cur_goals_list = [row['goal'] for row in rows]
+cur_goal_ids = [row['id'] for row in rows]
 
 match_ids = my_calc_similarity(cur_goals_list,cur_goal_ids)

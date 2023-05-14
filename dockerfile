@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/root/.cache \
 # FROM gcr.io/distroless/python3-debian11:debug
 FROM gcr.io/distroless/python3-debian11:debug
 ENV PYTHON_VERSION=3.9
-COPY  ./src /opt/venv
+COPY  ./src/*.py /opt/venv/
 COPY --from=python_install /opt/venv/ /opt/venv/
 COPY --from=python_install /usr/lib/ /usr/lib/
 ENV SPARK_HOME=/opt
