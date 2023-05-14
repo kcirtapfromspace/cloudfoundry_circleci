@@ -23,7 +23,7 @@ jobs:
           command: |
             export DOCKER_BUILDKIT=1
             TAG="0.1.${CIRCLE_BUILD_NUM}"
-            docker build -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest.
+            docker build -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest .
             echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG 
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest
@@ -31,7 +31,8 @@ jobs:
     executor: base-executor
 
     steps:
-
+      - setup_remote_docker:
+          docker_layer_caching: true
       - attach_workspace:
           at: .
       - run:
