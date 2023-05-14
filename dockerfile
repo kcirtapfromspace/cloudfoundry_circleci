@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/root/.cache \
     apt-get purge -y --auto-remove gcc python3-dev && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
-    find /opt/venv/ -name '*.pyc' -delete
+    # find /opt/venv/ -name '*.pyc' -delete
     # python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('bert-base-nli-mean-tokens')" && \
 
 
