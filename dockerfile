@@ -31,10 +31,7 @@ FROM gcr.io/distroless/python3-debian11:debug
 ENV PYTHON_VERSION=3.9
 COPY  ./src/*.py /opt/venv/
 COPY --from=python_install /opt/venv/ /opt/venv/
-COPY --from=python_install /opt/venv/bin/ /usr/bin/
-COPY --from=python_install /opt/venv/lib/python${PYTHON_VERSION}/site-packages/ /usr/lib/python${PYTHON_VERSION}/site-packages/
-COPY --from=python_install /opt/venv/lib/python${PYTHON_VERSION}/ /usr/lib/python${PYTHON_VERSION}/
-
+COPY --from=python_install /usr/lib/ /usr/lib/
 ENV SPARK_HOME=/opt
 ENV PATH=$PATH:/opt/bin
 ENV PATH /opt/venv/bin:$PATH
