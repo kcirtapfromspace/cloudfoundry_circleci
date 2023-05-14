@@ -8,8 +8,12 @@ jobs:
       - run:
           name: Install Cloud Foundry
           command: |
-            curl -v -L -o cf-cli_amd64.deb 'https://packages.cloudfoundry.org/stable?release=debian64&version=v7&source=github'
-            sudo dpkg -i cf-cli_amd64.deb
+            # ...first add the Cloud Foundry Foundation public key and package repository to your system
+            wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+            echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+            # ...then, update your local package index, then finally install the cf CLI
+            sudo apt-get update
+            sudo apt-get install cf8-cli
   build:
     # resource_class: small # specify a resource class
     docker:
