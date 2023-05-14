@@ -28,11 +28,7 @@ jobs:
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
   deploy_cloud_foundry:
     executor: base-executor
-    # environment:
-    #   CF_USERNAME: &cf-username $CF_USERNAME
-    #   CF_PASSWORD: &cf-password $CF_PASSWORD
-    #   CF_ORG: &cf-org $CF_ORG
-    #   CF_SPACE: &cf-space $CF_SPACE
+
     steps:
 
       - attach_workspace:
@@ -54,7 +50,7 @@ jobs:
           name: Deploy to Cloud Foundry
           command: |
             TAG="0.1.${CIRCLE_BUILD_NUM}"
-            CF_DOCKER_PASSWORD=$GITHUB_PAT cf run-ta Python_Bert --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG --docker-username $GITHUB_USERNAME
+            CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG --docker-username $GITHUB_USERNAME
 
       # - run:
       #     name: Check deployed app
