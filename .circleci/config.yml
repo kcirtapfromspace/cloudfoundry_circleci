@@ -28,11 +28,11 @@ jobs:
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
   deploy_cloud_foundry:
     executor: base-executor
-    environment:
-      CF_USERNAME: &cf-username $CF_USERNAME
-      CF_PASSWORD: &cf-password $CF_PASSWORD
-      CF_ORG: &cf-org $CF_ORG
-      CF_SPACE: &cf-space $CF_SPACE
+    # environment:
+    #   CF_USERNAME: &cf-username $CF_USERNAME
+    #   CF_PASSWORD: &cf-password $CF_PASSWORD
+    #   CF_ORG: &cf-org $CF_ORG
+    #   CF_SPACE: &cf-space $CF_SPACE
     steps:
 
       - attach_workspace:
