@@ -67,7 +67,7 @@ jobs:
       
 
 workflows:
-  my-workflow:
+  build-test-and-deploy:
     jobs:
       - build_bert_model
       - deploy_cloud_foundry:
@@ -75,4 +75,4 @@ workflows:
             - build_bert_model
           filters:
             branches:
-              only: master
+              only: main
