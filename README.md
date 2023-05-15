@@ -160,4 +160,6 @@ FAILED
 ```
 
 ### Docker image size
+Just look for anything to chop 
+du -amh / 2>/dev/null | sort -nr | head -n 10
 ```
