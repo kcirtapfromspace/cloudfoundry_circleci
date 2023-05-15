@@ -78,6 +78,19 @@ def status():
 
     return render_template('status.html', records=records)
 
+@app.route('/goal/<id>', methods=['GET'])
+def get_goal(id):
+    conn = connect_to_db()
+
+    with conn.cursor() as cur:
+        cur.execute("SELECT * FROM public.goals WHERE id = %s;", (id, ))
+        record = cur.fetchone()
+
+    if record is None:
+        return jsonify({'error': 'No goal found with the given id.'}), 404
+    else:
+        return jsonify({'id': record[0], 'goal': record[1]})
+
 
 def data_generator():
     global goal_counter

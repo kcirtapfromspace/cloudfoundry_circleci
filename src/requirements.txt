@@ -1,5 +1,4 @@
 scikit-learn
 psycopg2-binary
-pandas
 sentence-transformers
 

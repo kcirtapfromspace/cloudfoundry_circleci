@@ -4,8 +4,7 @@
 ## Prerequisites
 ### Cloud Foundry CLI (SAP 90 day trial)
 Get a free trial account on SAP Cloud Platform
-https://developers.sap.com/tutorials/hcp-cre
-ate-trial-account.html
+[https://developers.sap.com/tutorials/hcp-create-trial-account.html](https://developers.sap.com/tutorials/hcp-create-trial-account.html)
 
 Grab Cloud Foundry Envionment details
 API Endpoint: [https://api.cf.us10-001.hana.ondemand.com](https://api.cf.us10-001.hana.ondemand.com)
@@ -109,6 +108,27 @@ $ cf bind-service cloudfoundry_circleci pg-instance-trial-key
 NOTE:
 The total size of the Docker image file system layers must not exceed the disk quota for the app. The maximum disk allocation for apps is set by the Cloud Controller. The default maximum disk quota is 2048 MB per app.
 ### Cloud Foundry
+Run arbitrary commands 
+```
+cf tasks Python_Bert
+Getting tasks for app Python_Bert in org c44fa123trial / space dev as patrickdeutsch@gmail.com...
+
+id   name       state       start time                      command
+48   80f7e732   RUNNING     Mon, 15 May 2023 05:22:18 UTC   python opt/venv/cleaned_bert_similarity.py
+47   30984d50   FAILED      Mon, 15 May 2023 03:23:03 UTC   python ops/venv/cleaned_bert_similarity.py
+46   2b0a79d4   FAILED      Mon, 15 May 2023 03:07:57 UTC   python ops/venv/cleaned_bert_similarity.py
+45   f138c2d5   FAILED      Sun, 14 May 2023 20:42:31 UTC   ls -la usr/local/
+44   19856b6a   FAILED      Sun, 14 May 2023 20:41:53 UTC   ls -la /usr/local/
+43   b0b5f720   SUCCEEDED   Sun, 14 May 2023 20:37:23 UTC   ls -la opt/venv/bin
+42   ad0a2fc0   SUCCEEDED   Sun, 14 May 2023 20:36:36 UTC   ls -lah opt/venv/bin
+41   fe88d718   SUCCEEDED   Sun, 14 May 2023 20:20:08 UTC   ls -lah opt/venv/bin
+40   2561899a   SUCCEEDED   Sun, 14 May 2023 19:42:50 UTC   ls -lah opt/venv/bin
+39   b124a776   SUCCEEDED   Sun, 14 May 2023 19:33:12 UTC   ls -lah opt/venv/bin
+```
+
+```
+$ cf logs Python_Bert --recent
+Retrieving logs for app Python_Bert in org c44fa123trial / space dev as
 ```
 ...
    Collecting psycopg2-binary

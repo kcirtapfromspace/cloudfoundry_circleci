@@ -5,7 +5,7 @@ import psycopg2.extras
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-model = SentenceTransformer('bert-base-nli-mean-tokens')
+model = SentenceTransformer('distilbert-base-nli-mean-tokens')
 
 alpha = 0.9
 
