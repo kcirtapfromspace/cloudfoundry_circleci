@@ -21,8 +21,8 @@ RUN --mount=type=cache,target=/root/.cache \
     $VIRTUAL_ENV/bin/pip install sentence-transformers psycopg2-binary && \
     apt-get purge -y --auto-remove gcc python3-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
-    # find /opt/venv/ -name '*.pyc' -delete
+    apt-get clean && \
+    find /opt/venv/ -name '*.pyc' -delete
     # python -c "from sentence_transformers import SentenceTransformer; model = SentenceTransformer('bert-base-nli-mean-tokens')" && 
 
 # Final stage 
