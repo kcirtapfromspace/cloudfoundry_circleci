@@ -2,7 +2,7 @@ ARG PYTHON_VERSION=3.9
 # Python build stage
 FROM python:${PYTHON_VERSION}-slim-bullseye as python_base
 WORKDIR /opt/venv
-RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev && \
+RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev apt-utils  && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 ENV VIRTUAL_ENV=/opt/venv
@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/root/.cache \
         torchaudio\
         torchvision\
         --no-cache-dir && \
-    apt-get purge -y --auto-remove gcc python3-dev && \
+    apt-get purge -y --auto-remove gcc python3-dev apt-utils && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     find /opt/venv/ -name '*.pyc' -delete && \
