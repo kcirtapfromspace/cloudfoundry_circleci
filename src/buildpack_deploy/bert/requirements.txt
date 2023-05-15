@@ -1,0 +1,3 @@
+scikit-learn
+psycopg2-binary
+sentence-transformers
