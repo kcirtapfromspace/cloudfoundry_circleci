@@ -43,10 +43,11 @@ COPY  ./src/buildpack_deploy/bert/requirements.txt .
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN  --mount=type=cache,target=/root/.cache \ 
-    $VIRTUAL_ENV/bin/pip download -r requirements.txt --no-cache-dir
+    $VIRTUAL_ENV/bin/pip download -r requirements.txt --no-binary=:none: --no-cache-dir
 
 # Final stage
-FROM gcr.io/distroless/python3-debian11:debug
+# FROM gcr.io/distroless/python3-debian11:debug as final
+FROM python:${PYTHON_VERSION}-slim-bullseye as final
 ENV PYTHON_VERSION=3.9
 ENV PYTHONPATH "${PYTHONPATH}:/opt/venv/lib/python${PYTHON_VERSION}/site-packages"
 COPY  ./src/**/*.py /opt/venv/
