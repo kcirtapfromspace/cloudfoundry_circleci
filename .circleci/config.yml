@@ -17,7 +17,6 @@ jobs:
       - checkout  
       - setup_remote_docker:
           docker_layer_caching: true
-          
       - run:
           name: Build and push Docker image
           command: |
@@ -30,6 +29,7 @@ jobs:
       - run:
           name: Copy vendor folder from Docker image
           command: |
+            mkdir -p ~/artifacts
             TAG="0.1.${CIRCLE_BUILD_NUM}"
             docker create --name temp-container ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
             docker cp temp-container:/vendor ~/artifacts/vendor
