@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/root/.cache \
 ARG PYTHON_VERSION=3.9
 # Python artifact stage
 FROM base as artifact_build
-WORKDIR /opt/venv
+WORKDIR /vendor
 COPY  ./src/buildpack_deploy/bert/requirements.txt .
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
