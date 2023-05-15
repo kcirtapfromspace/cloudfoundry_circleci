@@ -22,7 +22,7 @@ jobs:
           command: |
             export DOCKER_BUILDKIT=1
             TAG="0.1.${CIRCLE_BUILD_NUM}"
-            docker build -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest .
+            docker build --target final -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest .
             echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG 
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest
@@ -68,25 +68,26 @@ jobs:
           name: Login to Cloud Foundry
           command: |
             cf login -a $CF_API -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s $CF_SPACE
-      - run:
-          name: Deploy to Cloud Foundry
-          command: |
-            TAG="0.1.${CIRCLE_BUILD_NUM}"
-            cf push py_bert \
-              -m 3G \
-              -k 4G \
-              --no-route \
-              --no-start 
       # - run:
-      #     name: Docker Deploy to Cloud Foundry
+      #     name: Deploy to Cloud Foundry
       #     command: |
       #       TAG="0.1.${CIRCLE_BUILD_NUM}"
-      #       CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert \
+      #       cf push py_bert \
+      #         -m 3G \
       #         -k 4G \
-      #         --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest \
-      #         --docker-username $GITHUB_USERNAME \
       #         --no-route \
       #         --no-start 
+      - run:
+          name: Docker Deploy to Cloud Foundry
+          command: |
+            TAG="0.1.${CIRCLE_BUILD_NUM}"
+            CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert \
+              -k 4G \
+              -m 3G \
+              --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest \
+              --docker-username $GITHUB_USERNAME \
+              --no-route \
+              --no-start 
 
 
 # Cron job to run every night at UTC (1am EST)\
