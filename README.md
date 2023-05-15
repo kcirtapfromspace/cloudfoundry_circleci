@@ -97,10 +97,9 @@ $ cf service-key pg-instance-trial pg-service-key | jq -R
 ```
 
 #### Bind the service key to the application
-```
+```sh
 $ cf bind-service cloudfoundry_circleci pg-instance-trial-key
 ```
-
 [github circleci auth]: https://medium.com/@praveena.vennakula/github-circleci-authentication-ef1e85d24b0
 [cloud foundry trial account]: https://developers.sap.com/tutorials/hcp-create-trial-account.html
 [circle ci]: https://circleci.com/signup/
@@ -109,8 +108,9 @@ $ cf bind-service cloudfoundry_circleci pg-instance-trial-key
 NOTE:
 The total size of the Docker image file system layers must not exceed the disk quota for the app. The maximum disk allocation for apps is set by the Cloud Controller. The default maximum disk quota is 2048 MB per app.
 ### Cloud Foundry
-Run arbitrary commands 
-```
+Run arbitrary commands with a pushed apps with run-task
+
+```sh
 cf tasks Python_Bert
 Getting tasks for app Python_Bert in org c44fa123trial / space dev as patrickdeutsch@gmail.com...
 
@@ -126,11 +126,10 @@ id   name       state       start time                      command
 40   2561899a   SUCCEEDED   Sun, 14 May 2023 19:42:50 UTC   ls -lah opt/venv/bin
 39   b124a776   SUCCEEDED   Sun, 14 May 2023 19:33:12 UTC   ls -lah opt/venv/bin
 ```
-
+### fetch runtime logs 
 ```
 $ cf logs Python_Bert --recent
 Retrieving logs for app Python_Bert in org c44fa123trial / space dev as
-```
 ...
    Collecting psycopg2-binary
    Downloading psycopg2_binary-2.9.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.0 MB)
@@ -181,6 +180,17 @@ FAILED
 ```
 
 ### Docker image size
-Just look for anything to chop 
+One was was to look for anything to chop out of the container image. The following command will list the top 10 largest files in the container image.  This is a good place to start looking for things to chop out of the container image.
+
+```
 du -amh / 2>/dev/null | sort -nr | head -n 10
+```
+
+here is what I came up with in the docker file after installing packages go clean up some junk
+```dockerfile
+rm -rf /root/.cache/pip && \
+rm -rf /usr/local/lib/python3.9/distutils && \
+rm -rf /usr/local/lib/python3.9/site-packages/pip/_vendor/ && \
+find /opt/venv/ -type d \( -name 'tests' -o -name 'test' -o -name 'testing' \) -exec rm -rf {} + && \
+find /opt/venv/ -type f \( -name '*_test.py' -o -name 'test.py' \) -delete
 ```
