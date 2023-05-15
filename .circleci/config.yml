@@ -38,6 +38,10 @@ jobs:
             docker rm temp-container
       - store_artifacts:
           path: /tmp/artifacts
+      - persist_to_workspace:
+          root: /tmp/artifacts
+          paths:
+            - vendor
   deploy_cloud_foundry:
     executor: base-executor
 
