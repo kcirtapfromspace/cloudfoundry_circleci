@@ -42,19 +42,19 @@ jobs:
           root: /tmp/artifacts
           paths:
             - vendor
+
   deploy_cloud_foundry:
     executor: base-executor
-
     steps:
       - checkout
       - attach_workspace:
           at: src/buildpack_deploy/bert
       - setup_remote_docker:
           docker_layer_caching: true
-      - run:
-          name: Move vendor directory
-          command: |
-            mv /tmp/artifacts/vendor .
+      # - run:
+      #     name: Move vendor directory
+      #     command: |
+      #       mv /tmp/artifacts/vendor .
       - run:
           name: Install Cloud Foundry
           command: |
@@ -68,15 +68,6 @@ jobs:
           name: Login to Cloud Foundry
           command: |
             cf login -a $CF_API -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s $CF_SPACE
-      # - run:
-      #     name: Deploy to Cloud Foundry
-      #     command: |
-      #       TAG="0.1.${CIRCLE_BUILD_NUM}"
-      #       cf push py_bert \
-      #         -m 3G \
-      #         -k 4G \
-      #         --no-route \
-      #         --no-start 
       - run:
           name: Docker Deploy to Cloud Foundry
           command: |
@@ -88,6 +79,15 @@ jobs:
               --docker-username $GITHUB_USERNAME \
               --no-route \
               --no-start 
+      # - run:
+      #     name: Deploy to Cloud Foundry
+      #     command: |
+      #       TAG="0.1.${CIRCLE_BUILD_NUM}"
+      #       cf push py_bert \
+      #         -m 3G \
+      #         -k 4G \
+      #         --no-route \
+      #         --no-start 
 
 
 # Cron job to run every night at UTC (1am EST)\
