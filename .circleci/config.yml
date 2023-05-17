@@ -122,6 +122,7 @@ workflows:
   build-test-and-deploy:
     jobs:
       - build_bert_model
+      - list-container-vulnerabilities
       - deploy_cloud_foundry:
           requires:
             - build_bert_model
