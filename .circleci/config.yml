@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  grype: anchore/grype@0.2.0
 
 executors:
   base-executor:
@@ -42,17 +44,6 @@ jobs:
           root: /tmp/artifacts
           paths:
             - vendor
-      - run:
-          name: Grype Vulnerability Scan Docker image
-          command: |
-            echo $docker_config_json" > ./config.json
-            echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
-            docker run -rm -v ./config.json:/config/config.json -e "DOCKER_CONFIG=/config" 
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --name grype anchore/grype:latest \
-            ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
-
-            
           # docker cp grype:/vendor /tmp/artifacts/vendor
 
   deploy_cloud_foundry:
@@ -60,7 +51,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: src/buildpack_deploy/bert
+          at: src/bert
       - setup_remote_docker:
           docker_layer_caching: true
       # - run:
@@ -145,6 +136,15 @@ workflows:
       - deploy_cloud_foundry:
           requires:
             - build_bert_model
+            - grype/list-image-vulns
           filters:
             branches:
               only: main
+      - grype/list-image-vulns:
+          image-name:  ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest # grype will pull this image from docker.io, by default, check the scan-image command for more options 
+          registry-address:	ghcr.io
+          fail-on-severity: high
+          registry-user: $GITHUB_USERNAME
+          registry-pass: $GITHUB_PAT
+      - grype/list-dir-vulns:
+          path-to-scan: ./
