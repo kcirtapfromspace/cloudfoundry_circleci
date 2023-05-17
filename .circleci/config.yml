@@ -6,10 +6,6 @@ executors:
   base-executor:
     docker:
       - image: cimg/base:2023.05
-        # auth:
-        #   username: $GITHUB_USERNAME
-        #   password: $GITHUB_PAT  # context / project UI env-var reference
-    # working_directory: /tmp
 
 jobs:
   build_bert_model:
@@ -28,23 +24,22 @@ jobs:
             echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG 
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest
-      - run:
-          name: Copy vendor folder from Docker image
-          command: |
-            export DOCKER_BUILDKIT=1
-            mkdir -p /tmp/artifacts
-            TAG="0.1.${CIRCLE_BUILD_NUM}"
-            docker build --target artifact_build -t artifact_build_image:$TAG .
-            docker create --name temp-container artifact_build_image:$TAG
-            docker cp temp-container:/vendor /tmp/artifacts/vendor
-            docker rm temp-container
-      - store_artifacts:
-          path: /tmp/artifacts
-      - persist_to_workspace:
-          root: /tmp/artifacts
-          paths:
-            - vendor
-          # docker cp grype:/vendor /tmp/artifacts/vendor
+      # - run:
+      #     name: Copy vendor folder from Docker image
+      #     command: |
+      #       export DOCKER_BUILDKIT=1
+      #       mkdir -p /tmp/artifacts
+      #       TAG="0.1.${CIRCLE_BUILD_NUM}"
+      #       docker build --target artifact_build -t artifact_build_image:$TAG .
+      #       docker create --name temp-container artifact_build_image:$TAG
+      #       docker cp temp-container:/vendor /tmp/artifacts/vendor
+      #       docker rm temp-container
+      # - store_artifacts:
+      #     path: /tmp/artifacts
+      # - persist_to_workspace:
+      #     root: /tmp/artifacts
+      #     paths:
+      #       - vendor
       - grype/scan-image:
           image-name: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest # grype will pull this image from docker.io, by default, check the scan-image command for more options 
           registry-address: ghcr.io
@@ -59,10 +54,6 @@ jobs:
           at: src/bert
       - setup_remote_docker:
           docker_layer_caching: true
-      # - run:
-      #     name: Move vendor directory
-      #     command: |
-      #       mv /tmp/artifacts/vendor .
       - run:
           name: Install Cloud Foundry
           command: |
@@ -87,15 +78,6 @@ jobs:
               --docker-username $GITHUB_USERNAME \
               --no-route \
               --no-start 
-      # - run:
-      #     name: Deploy to Cloud Foundry
-      #     command: |
-      #       TAG="0.1.${CIRCLE_BUILD_NUM}"
-      #       cf push py_bert \
-      #         -m 3G \
-      #         -k 4G \
-      #         --no-route \
-      #         --no-start 
 
 
 # Cron job to run every night at UTC (1am EST)\
@@ -123,15 +105,6 @@ jobs:
           command: |
             cf run-task Python_Bert --start-command "python3 cleaned_bert_similarity.py"
 
-
-      # - run:
-      #     name: Check deployed app
-      #     command: |
-      #       curl -s -o /dev/null -w "%{http_code}" https://cloudfoundry-circleci.cfapps.io/
-      # - run:  
-      #     name: Delete old app
-      #     command: |
-      #       cf delete -f cloudfoundry-circleci-old
       
 
 workflows:

@@ -29,13 +29,13 @@ RUN python3 -m venv $VIRTUAL_ENV && \
     # find /opt/venv/ -type f \( -name '.pyc' -name '.pyo' -name '*_test.py' -o -name 'test.py' \) -delete
 
 # Python artifact stage
-FROM python_base as artifact_build
-WORKDIR /vendor
-COPY  ./src/bert/requirements.txt .
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-RUN  --mount=type=cache,target=/root/.cache \ 
-    $VIRTUAL_ENV/bin/pip download -r requirements.txt --no-binary=:none: --no-cache-dir
+# FROM python_base as artifact_build
+# WORKDIR /vendor
+# COPY  ./src/bert/requirements.txt .
+# ENV VIRTUAL_ENV=/opt/venv
+# ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# RUN  --mount=type=cache,target=/root/.cache \ 
+#     $VIRTUAL_ENV/bin/pip download -r requirements.txt --no-binary=:none: --no-cache-dir
 
 # Final stage
 FROM gcr.io/distroless/python3-debian11:debug as final
