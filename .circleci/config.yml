@@ -42,6 +42,18 @@ jobs:
           root: /tmp/artifacts
           paths:
             - vendor
+      - run:
+          name: Grype Vulnerability Scan Docker image
+          command: |
+            echo $docker_config_json" > ./config.json
+            echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
+            docker run -rm -v ./config.json:/config/config.json -e "DOCKER_CONFIG=/config" 
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --name grype anchore/grype:latest \
+            ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
+
+            
+          # docker cp grype:/vendor /tmp/artifacts/vendor
 
   deploy_cloud_foundry:
     executor: base-executor
