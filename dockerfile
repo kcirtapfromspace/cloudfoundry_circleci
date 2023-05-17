@@ -1,59 +1,51 @@
 ARG PYTHON_VERSION=3.9
+ARG TORCH_VERSION=2.0.1
+ARG TORCHVISION_VERSION=0.15.2
+ARG TORCHAUDIO_VERSION=2.0.2
 # Python build stage
 FROM python:${PYTHON_VERSION}-slim-bullseye as python_base
 WORKDIR /opt/venv
 RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev apt-utils  && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
+COPY  ./src/buildpack_deploy/bert/requirements.txt .
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python3 -m venv $VIRTUAL_ENV && \
     $VIRTUAL_ENV/bin/python3 -m pip install -U --upgrade pip --no-cache-dir && \
-    $VIRTUAL_ENV/bin/pip install --upgrade pip setuptools wheel psutil --no-cache-dir
-# # Python install stage
-FROM  python_base as python_install
-WORKDIR /opt/venv
-# Use buildkit to cache pip dependencies
-# https://pythonspeed.com/articles/docker-cache-pip-downloads/
-RUN --mount=type=cache,target=/root/.cache \ 
-    $VIRTUAL_ENV/bin/pip install \
-        -f https://download.pytorch.org/whl/torch_stable.html\
-        psycopg2-binary\
-        sentence-transformers\ 
-        torch \
-        torchaudio\
-        torchvision\
-        --no-cache-dir && \
+    $VIRTUAL_ENV/bin/pip install --upgrade pip setuptools wheel psutil cleanpy --no-cache-dir && \
+    $VIRTUAL_ENV/bin/pip install --upgrade install torch==${TORCH_VERSION}+cpu torchvision==${TORCH_VERSION}+cpu torchaudio==${TORCH_VERSION}+cpu -f https://download.pytorch.org/whl/cpu --no-cache-dir && \
+    $VIRTUAL_ENV/bin/pip install -r requirements.txt --no-cache-dir  && \
     apt-get purge -y --auto-remove gcc python3-dev apt-utils && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
-    find /opt/venv/ -name '*.pyc' -delete && \
+    cleanpy -v -f -a /opt/venv/
     # Remove any weight that we can to keep under the 2048MB limit of Cloud Foundry
-    rm -rf /root/.cache/pip && \
-    rm -rf /usr/local/lib/python3.9/distutils && \
-    rm -rf /usr/local/lib/python3.9/site-packages/pip/_vendor/ && \
-    find /opt/venv/ -type d \( -name 'tests' -o -name 'test' -o -name 'testing' \) -exec rm -rf {} + && \
-    find /opt/venv/ -type f \( -name '*_test.py' -o -name 'test.py' \) -delete
+    # rm -rf /root/.cache/pip && \
+    # rm -rf /usr/local/lib/python3.9/distutils && \
+    # rm -rf /usr/local/lib/python3.9/site-packages/pip/_vendor/ && \
+    # find /opt/venv/ -type d \(-name '__pycache__' -name 'tests' -o -name 'test' -o -name 'testing' \) -exec rm -rf {} + && \
+    # find /opt/venv/ -type f \( -name '.pyc' -name '.pyo' -name '*_test.py' -o -name 'test.py' \) -delete
 
-ARG PYTHON_VERSION=3.9
-# Python artifact stage
-FROM python_base as artifact_build
-WORKDIR /vendor
-COPY  ./src/buildpack_deploy/bert/requirements.txt .
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-RUN  --mount=type=cache,target=/root/.cache \ 
-    $VIRTUAL_ENV/bin/pip download -r requirements.txt --no-binary=:none: --no-cache-dir
+# ARG PYTHON_VERSION=3.9
+# # Python artifact stage
+# FROM python_base as artifact_build
+# WORKDIR /vendor
+# COPY  ./src/buildpack_deploy/bert/requirements.txt .
+# ENV VIRTUAL_ENV=/opt/venv
+# ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# RUN  --mount=type=cache,target=/root/.cache \ 
+#     $VIRTUAL_ENV/bin/pip download -r requirements.txt --no-binary=:none: --no-cache-dir
 
 # Final stage
-# FROM gcr.io/distroless/python3-debian11:debug as final
-FROM python:${PYTHON_VERSION}-slim-bullseye as final
+FROM gcr.io/distroless/python3-debian11:debug as final
+# FROM python:${PYTHON_VERSION}-slim-bullseye as final
 ENV PYTHON_VERSION=3.9
 ENV PYTHONPATH "${PYTHONPATH}:/opt/venv/lib/python${PYTHON_VERSION}/site-packages"
 COPY  ./src/**/*.py /opt/venv/
-COPY --from=python_install /opt/venv/ /opt/venv/
-COPY --from=python_install /usr/lib/ /usr/lib/
-COPY --from=python_install /usr/local/lib/ /usr/local/lib/
+COPY --from=python_base /opt/venv/ /opt/venv/
+COPY --from=python_base /usr/lib/ /usr/lib/
+COPY --from=python_base /usr/local/lib/ /usr/local/lib/
 ENV SPARK_HOME=/opt
 ENV PATH=$PATH:/opt/bin
 ENV PATH /opt/venv/bin:$PATH
