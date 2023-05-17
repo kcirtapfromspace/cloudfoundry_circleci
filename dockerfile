@@ -1,7 +1,4 @@
 ARG PYTHON_VERSION=3.9
-ARG TORCH_VERSION=2.0.0
-ARG TORCHVISION_VERSION=0.15.2
-ARG TORCHAUDIO_VERSION=2.0.2
 # Python build stage
 FROM python:${PYTHON_VERSION}-slim-bullseye as python_base
 WORKDIR /opt/venv
@@ -10,6 +7,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev
     apt-get clean
 COPY  ./src/bert/requirements.txt .
 
+ENV TORCH_VERSION=2.0.0
+ENV TORCHVISION_VERSION=0.15.2
+ENV TORCHAUDIO_VERSION=2.0.2
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python3 -m venv $VIRTUAL_ENV && \
