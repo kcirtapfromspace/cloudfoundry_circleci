@@ -140,9 +140,9 @@ workflows:
           filters:
             branches:
               only: main
-      - grype/list-image-vulns:
-          image-name:  ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest # grype will pull this image from docker.io, by default, check the scan-image command for more options 
-          registry-address:	ghcr.io
+      - grype/scan-image:
+          image-name: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest # grype will pull this image from docker.io, by default, check the scan-image command for more options 
+          registry-address: ghcr.io
           fail-on-severity: high
           registry-user: $GITHUB_USERNAME
           registry-pass: $GITHUB_PAT
