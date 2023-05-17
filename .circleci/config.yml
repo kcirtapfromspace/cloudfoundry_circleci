@@ -45,7 +45,14 @@ jobs:
           paths:
             - vendor
           # docker cp grype:/vendor /tmp/artifacts/vendor
-
+      - grype/scan-image:
+          image-name: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest # grype will pull this image from docker.io, by default, check the scan-image command for more options 
+          registry-address: ghcr.io
+          fail-on-severity: high
+          registry-user: $GITHUB_USERNAME
+          registry-pass: $GITHUB_PAT
+      - grype/list-dir-vulns:
+          path-to-scan: ./
   deploy_cloud_foundry:
     executor: base-executor
     steps:
@@ -139,11 +146,3 @@ workflows:
           filters:
             branches:
               only: main
-      - grype/scan-image:
-          image-name: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest # grype will pull this image from docker.io, by default, check the scan-image command for more options 
-          registry-address: ghcr.io
-          fail-on-severity: high
-          registry-user: $GITHUB_USERNAME
-          registry-pass: $GITHUB_PAT
-      - grype/list-dir-vulns:
-          path-to-scan: ./
