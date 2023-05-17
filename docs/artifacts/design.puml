@@ -1,0 +1,47 @@
+@startuml
+!include https://raw.githubusercontent.com/adrianvlupu/C4-PlantUML/latest/C4_Container.puml
+title  boundary view
+Person(personnel, " User", "An end-user of the ")
+Person(developer, " Developer", " vendor developers and GTM")
+Boundary(aws, "AWS") {
+  Boundary(cloudgov, "cloudfoundry") {
+    System_Ext(aws_alb, "cloudfoundry load-balancer", "AWS ALB")
+    System_Ext(cloudgov_api, "cloudfoundry API")
+    System_Ext(cloudgov_router, "<&layers> cloudfoundry routers", "Cloud Foundry traffic service")
+    Boundary(atob, "Accreditation Boundary") {
+      Container(analytic_app, " Analytic Application", "Python", "Perform background work and data processing")
+      ContainerDb(www_db, "PostgreSQL Database", "AWS RDS", "Analytics Schema Database")
+      ContainerDb(analytic_s3, "AWS S3 Analytics Bucket", "AWS S3", "Stores static file assets")
+    }
+  }
+}
+
+Boundary(gsa_fed_saas, "FedRAMP-approved SaaS") {
+  System_Ext(newrelic, "New Relic", "Continuous Monitoring")
+}
+Rel(developer, newrelic, "Manage performance & logging", "https GET/POST/PUT/DELETE (443)")
+Rel(analytic_app, newrelic, "reports telemetry", "tcp (443)")
+Rel(personnel, aws_alb, "manage TTA data", "https GET/POST/PUT/DELETE, secure websockets - WSS (443)")
+note right on link
+All connections depicted are encrypted with TLS 1.2 unless otherwise noted.
+end note
+Rel(analytic_s3, personnel, "download file attachments", "https GET (443)")
+Rel(aws_alb, cloudgov_router, "proxies requests", "https GET/POST/PUT/DELETE, secure websockets - WSS (443)")
+Rel(cloudgov_router, analytic_app, "proxies requests", "https GET/POST/PUT/DELETE, secure websockets - WSS (443)")
+BiRel(analytic_app, www_db, "reads/writes dataset records", "psql")
+BiRel(analytic_app, analytic_s3, "reads/writes data content", "vpc endpoint")
+Boundary(development_saas, "CI/CD Pipeline") {
+  System_Ext(github, "GitHub", "code repository, container registry")
+  System_Ext(circleci, "CircleCI", "Continuous Integration Service")
+  Boundary(ci_cd, "CircleCI - CI/CD Workflow") {
+    System_Ext(build_container, "CircleCI - Clair", "Container Build")
+    System_Ext(clair, "CircleCI - Clair", "Vulerability Scanning")
+    System_Ext(publish_container, "CircleCI - Push Container", "Publish Container")
+  }
+}
+Rel(developer, github, "Publish code", "git ssh (22)")
+Rel(github, circleci, "Commit hook notifies CircleCI to run CI/CD pipeline")
+Rel(circleci, cloudgov_api, "Deploy application on successful CI/CD run")
+Lay_D(personnel, aws)
+[personnel] -r-> [analytic_app]
+@enduml

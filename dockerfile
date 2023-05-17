@@ -8,7 +8,7 @@ WORKDIR /opt/venv
 RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev apt-utils  && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
-COPY  ./src/buildpack_deploy/bert/requirements.txt .
+COPY  ./src/bert/requirements.txt .
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python3 -m venv $VIRTUAL_ENV && \
