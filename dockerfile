@@ -31,7 +31,7 @@ RUN python3 -m venv $VIRTUAL_ENV && \
 # Python artifact stage
 FROM python_base as artifact_build
 WORKDIR /vendor
-COPY  ./src/buildpack_deploy/bert/requirements.txt .
+COPY  ./src/bert/requirements.txt .
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN  --mount=type=cache,target=/root/.cache \ 

@@ -51,7 +51,6 @@ jobs:
           fail-on-severity: high
           registry-user: $GITHUB_USERNAME
           registry-pass: $GITHUB_PAT
-
   deploy_cloud_foundry:
     executor: base-executor
     steps:
