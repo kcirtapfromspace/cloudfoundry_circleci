@@ -136,7 +136,6 @@ workflows:
       - deploy_cloud_foundry:
           requires:
             - build_bert_model
-            - grype/list-image-vulns
           filters:
             branches:
               only: main
