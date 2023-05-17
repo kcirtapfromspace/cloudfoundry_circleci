@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev
     apt-get clean
 COPY  ./src/bert/requirements.txt .
 
-ENV TORCH_VERSION=2.0.0
+ENV TORCH_VERSION=2.0.1
 ENV TORCHVISION_VERSION=0.15.2
 ENV TORCHAUDIO_VERSION=2.0.2
 ENV VIRTUAL_ENV=/opt/venv
