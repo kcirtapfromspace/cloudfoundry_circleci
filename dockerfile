@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION=3.9
-ARG TORCH_VERSION=2.0.1
+ARG TORCH_VERSION=2.0.0
 ARG TORCHVISION_VERSION=0.15.2
 ARG TORCHAUDIO_VERSION=2.0.2
 # Python build stage
@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 COPY  ./src/bert/requirements.txt .
+
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python3 -m venv $VIRTUAL_ENV && \
     $VIRTUAL_ENV/bin/python3 -m pip install -U --upgrade pip --no-cache-dir && \
-    $VIRTUAL_ENV/bin/pip install --upgrade pip setuptools wheel psutil cleanpy --no-cache-dir && \
-    $VIRTUAL_ENV/bin/pip install --upgrade install torch==${TORCH_VERSION}+cpu torchvision==${TORCH_VERSION}+cpu torchaudio==${TORCH_VERSION}+cpu -f https://download.pytorch.org/whl/cpu --no-cache-dir && \
+    $VIRTUAL_ENV/bin/pip install --upgrade setuptools wheel psutil cleanpy --no-cache-dir && \
+    $VIRTUAL_ENV/bin/pip install --upgrade torch==${TORCH_VERSION}+cpu torchvision==${TORCHVISION_VERSION}+cpu torchaudio==${TORCHAUDIO_VERSION} --index-url https://download.pytorch.org/whl/cpu --no-cache-dir && \
     $VIRTUAL_ENV/bin/pip install -r requirements.txt --no-cache-dir  && \
     apt-get purge -y --auto-remove gcc python3-dev apt-utils && \
     rm -rf /var/lib/apt/lists/* && \
