@@ -47,15 +47,15 @@ jobs:
       #     root: /tmp/artifacts
       #     paths:
       #       - vendor
-    list-container-vulnerabilities:
-      executor: grype/default
-      steps:
-      - grype/scan-image:
-          image-name: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM} # grype will pull this image from docker.io, by default, check the scan-image command for more options 
-          registry-address: ghcr.io
-          fail-on-severity: high
-          registry-user: $GITHUB_USERNAME
-          registry-pass: $GITHUB_PAT
+  list-container-vulnerabilities:
+    executor: grype/default
+    steps:
+    - grype/scan-image:
+        image-name: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM} # grype will pull this image from docker.io, by default, check the scan-image command for more options 
+        registry-address: ghcr.io
+        fail-on-severity: high
+        registry-user: $GITHUB_USERNAME
+        registry-pass: $GITHUB_PAT
 
   deploy_cloud_foundry:
     executor: base-executor
