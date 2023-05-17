@@ -73,8 +73,8 @@ jobs:
           command: |
             TAG="0.1.${CIRCLE_BUILD_NUM}"
             CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert \
-              -k 4G \
-              -m 3G \
+              -k 7G \
+              -m 5G \
               --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest \
               --docker-username $GITHUB_USERNAME \
               --no-route \

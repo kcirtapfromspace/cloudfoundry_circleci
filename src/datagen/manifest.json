@@ -6,3 +6,4 @@ applications:
   buildpacks: python_buildpack
   services:
   - postgresql-db
+  command: python datagen.py

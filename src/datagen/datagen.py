@@ -10,10 +10,16 @@ import psycopg2
 import uuid
 from time import sleep
 from threading import Thread
+from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+
+
 
 app = Flask(__name__)
 env = AppEnv()
+FlaskInstrumentor().instrument_app(app)
 
+Psycopg2Instrumentor().instrument()
 postgres = 'postgresql-db'
 postgres_service = env.get_service(label=postgres)
 

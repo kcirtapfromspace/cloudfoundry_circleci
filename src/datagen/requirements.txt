@@ -4,4 +4,5 @@ flask
 uuid
 cfenv
 hdbcli
-
+opentelemetry-instrumentation-psycopg2
+opentelemetry-instrumentation-flask
