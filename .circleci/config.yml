@@ -9,6 +9,26 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
+  vendor_artifacts:
+    executor: cimg/python:15.3.0
+    steps:
+      - checkout
+      - run: python --version
+      - run:
+          name: Install Python dependencies
+          command: |
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
+      - run:
+          name: Copy vendor folder
+          command: |
+            mkdir -p /tmp/artifacts
+            cp -r vendor /tmp/artifacts/vendor
+      - persist_to_workspace:
+          root: /tmp/artifacts
+          paths:
+            - vendor
+
   build_bert_model:
     # resource_class: small # specify a resource class
     executor: base-executor
