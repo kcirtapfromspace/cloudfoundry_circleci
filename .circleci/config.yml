@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   pack: buildpacks/pack@0.2.4
-#   grype: anchore/grype@0.2.0
+  
 executors:
   base-executor:
     docker:
@@ -191,6 +191,9 @@ workflows:
             branches:
               only: main
       - paketo_build
+      - buildpacks/build:
+          builder: heroku/buildpacks:18
+          image-name: myimage
       - publish:
           requires:
             - paketo_build
