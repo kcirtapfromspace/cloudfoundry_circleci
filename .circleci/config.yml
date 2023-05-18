@@ -41,7 +41,7 @@ jobs:
             - vendor
 
 
-  list-container-vulnerabilities:
+  list_container_vulnerabilities:
     executor: base-executor
     steps:
       - run:
