@@ -9,6 +9,18 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
+  paketo_build:
+    machine: true
+    docker_layer_caching: true
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - buildpacks/build:
+          builder: paketobuildpacks/builder:base
+          buildpack: paketo-buildpacks/python
+          image-file: pybert.tgz
+          image-name: pybert
   publish:
     machine: true
     steps:
@@ -16,8 +28,8 @@ jobs:
           at: /tmp/workspace
       - run:
           command: |
-            docker load -i /tmp/workspace/images/myimage.tgz
-            docker push myimage
+            docker load -i /tmp/workspace/images/pybert.tgz
+            docker push pybert
   build_bert_model:
     # resource_class: small # specify a resource class
     executor: base-executor
@@ -179,14 +191,10 @@ workflows:
           filters:
             branches:
               only: main
-      - buildpacks/build:
-          builder: paketobuildpacks/builder:base
-          buildpack: paketo-buildpacks/python
-          image-file: pybert.tgz
-          image-name: pybert
+      - paketo_build
       - publish:
           requires:
-            - buildpacks/build
+            - paketo_build
           filters:
             branches:
               only: main
