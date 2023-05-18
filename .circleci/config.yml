@@ -11,9 +11,9 @@ jobs:
       - image: cimg/python:3.11.3
     steps:
       - checkout
+      - run: python --version
       - attach_workspace:
           at: src/bert
-      - run: python --version
       - run:
           name: Install Python dependencies
           command: |
