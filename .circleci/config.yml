@@ -18,7 +18,7 @@ jobs:
           name: Install Python dependencies
           command: |
             python3 -m pip install --upgrade pip
-            pip install -r requirements.txt
+            pip install -r src/bert/requirements.txt
       - run:
           name: Copy vendor folder
           command: |
