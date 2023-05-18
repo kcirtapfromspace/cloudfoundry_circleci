@@ -9,17 +9,23 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
-  paketo_build:
-    executor: base-executor
+  publish:
+    machine: true
     steps:
-      - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - buildpacks/build:
-          builder: paketobuildpacks/builder:base
-          buildpack: paketo-buildpacks/python
-          image-file: pybert.tgz
-          image-name: pybert
+      - run:
+          command: |
+            docker load -i /tmp/workspace/images/myimage.tgz
+            docker push myimage
+  # paketo_build:
+  #   executor: base-executor
+  #   steps:
+  #     - buildpacks/build:
+  #         builder: paketobuildpacks/builder:base
+  #         buildpack: paketo-buildpacks/python
+  #         image-file: pybert.tgz
+  #         image-name: pybert
   #         env-vars:
   #           BP_DEBUG: true
   #         working-directory: /tmp/workspace/src/bert
@@ -214,9 +220,18 @@ jobs:
       
 
 workflows:
+  main:
+      jobs:
+        - buildpacks/build:
+            builder: heroku/buildpacks:18
+            image-file: myimage.tgz
+            image-name: myimage
+        - publish:
+            requires:
+              - buildpacks/build
   build_test_and_deploy:
     jobs:
-      - paketo_build
+      # - paketo_build
       - build_bert_model
       - list_container_vulnerabilities:
           requires:
