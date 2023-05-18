@@ -55,7 +55,7 @@ jobs:
             OUTPUT_FILE: /tmp/artifacts/syft_sbom.json
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
-            ./syft login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_PAT
+            echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             ./syft packages "$IMAGE_NAME" --scope AllLayers -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" 
             echo "scan results saved in $OUTPUT_FILE"
           # echo $GITHUB_PAT | ./syft login ghcr.io -u $GITHUB_USERNAME --password-stdin 
