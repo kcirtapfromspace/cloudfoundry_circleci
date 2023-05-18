@@ -229,9 +229,7 @@ workflows:
             branches:
               only: main
       # - paketo_build
-      - buildpacks/build:
-          builder: heroku/buildpacks:18
-          image-name: myimage
+      - buildpacks/build
       - publish:
           requires:
             - paketo_build
