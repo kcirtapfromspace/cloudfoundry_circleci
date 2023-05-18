@@ -51,8 +51,8 @@ jobs:
           environment:
             SYFT_VERSION: v0.80.0
             IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
-            OUTPUT_FORMAT: github-json
-            OUTPUT_FILE: /tmp/artifacts/syft.json
+            OUTPUT_FORMAT: json
+            OUTPUT_FILE: /tmp/artifacts/syft_sbom.json
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
               echo $GITHUB_PAT | ./syft login ghcr.io -u $GITHUB_USERNAME --password-stdin 
@@ -65,11 +65,22 @@ jobs:
             IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
             OUTPUT_FORMAT: sarif
             OUTPUT_FILE: /tmp/artifacts/grype.json
-
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$GRYPE_VERSION"
-            ./grype "$IMAGE_NAME"  --scope AllLayers --only-fixed --by-cve --output sarif-o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}"  --debug 
+            ./grype sbom:/tmp/artifacts/syft_sbom.json
             echo "scan results saved in $OUTPUT_FILE"
+      # - run:
+      #     name: Grype Scan SBOM
+      #     environment:
+      #       GRYPE_VERSION: v0.61.1
+      #       IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
+      #       OUTPUT_FORMAT: sarif
+      #       OUTPUT_FILE: /tmp/artifacts/grype.json
+
+      #     command: |
+      #       curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$GRYPE_VERSION"
+      #       ./grype "$IMAGE_NAME"  --scope AllLayers --only-fixed --by-cve --output sarif-o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}"  --debug 
+      #       echo "scan results saved in $OUTPUT_FILE"
       - store_artifacts:
           path: /tmp/artifacts
 
