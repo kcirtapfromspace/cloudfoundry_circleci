@@ -45,7 +45,6 @@ jobs:
             docker build --target final -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG -t ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest .
             echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG 
-            docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest
       - run:
           name: Copy vendor folder from Docker image
           command: |
@@ -77,10 +76,10 @@ jobs:
             OUTPUT_FILE: /tmp/artifacts/syft_sbom.json
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
+            echo $GITHUB_PAT | ./syft login ghcr.io -u $GITHUB_USERNAME --password-stdin  -vv
             ./syft packages "$IMAGE_NAME" -vv --scope AllLayers -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" 
             echo "scan results saved in $OUTPUT_FILE"
           # echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
-          # echo $GITHUB_PAT | ./syft login ghcr.io -u $GITHUB_USERNAME --password-stdin 
       - run:
           name: Grype Docker image
           environment:
@@ -121,6 +120,11 @@ jobs:
           at: src/bert
       - setup_remote_docker:
           docker_layer_caching: true
+      - run: 
+          name: tag build image as latest
+          command: |
+            TAG="0.1.${CIRCLE_BUILD_NUM}"
+            docker tag ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest
       - run:
           name: Install Cloud Foundry
           command: |
@@ -137,7 +141,6 @@ jobs:
       - run:
           name: Docker Deploy to Cloud Foundry
           command: |
-            TAG="0.1.${CIRCLE_BUILD_NUM}"
             CF_DOCKER_PASSWORD=$GITHUB_PAT cf push Python_Bert \
               -k 7G \
               -m 5G \
@@ -220,4 +223,9 @@ workflows:
           filters:
             branches:
               only: main
-
+      - vendor_deploy_cloud_foundry:
+          requires:
+            - vendor_artifacts
+          filters:
+            branches:
+              only: main
