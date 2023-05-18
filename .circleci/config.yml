@@ -9,15 +9,13 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
-  buildpacks/build:
+  main:
     executor: base-executor
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - pack-build:
+      - buildpacks/build:
           builder: paketobuildpacks/builder:base
-          buildpack: paketo-buildpacks/python
+          image-name: pybert
   #         env-vars:
   #           BP_DEBUG: true
   #         working-directory: /tmp/workspace/src/bert
@@ -228,4 +226,4 @@ workflows:
           filters:
             branches:
               only: main
-      -  buildpacks/build
+
