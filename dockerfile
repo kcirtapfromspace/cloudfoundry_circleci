@@ -44,10 +44,11 @@ ENV PYTHON_VERSION=3.9
 ENV PYTHONPATH "${PYTHONPATH}:/opt/venv/lib/python${PYTHON_VERSION}/site-packages"
 COPY  ./src/**/*.py /opt/venv/
 COPY --from=python_base /opt/venv/ /opt/venv/
-# COPY --from=python_base /usr/lib/ /usr/lib/
-# COPY --from=python_base /usr/local/lib/ /usr/local/lib/
+COPY --from=python_base /usr/lib/ /usr/lib/
+COPY --from=python_base /usr/local/lib/ /usr/local/lib/
 ENV SPARK_HOME=/opt
 ENV PATH=$PATH:/opt/bin
 ENV PATH /opt/venv/bin:$PATH
 WORKDIR /opt/venv
-CMD ["python3", "/app.py"]
+CMD ["python", "/app.py"]
+

@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = "nlp in cloudfoundry"
+authors = ["kcirtapfromspace <105461352+kcirtapfromspace@users.noreply.github.com>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+scikit-learn = {version = "^1.2.2"}
+sentence-transformers = {version = "^2.2.2"}
+# torch = {version = "^2.0.1", source="torch"}
+# torchvision = {version = "^0.15.2", source="torch"}
+# torchaudio = {version = "^2.0.2", source="torch"}
+torch = {version = "^2.0.1", source = "torch"}
+torchvision = {version = "^0.15.2", source = "torch"}
+torchaudio = {version = "^2.0.2", source = "torch"}
+gunicorn = {version = "^20.1.0"}
+flask = {version = "^2.3.2"}
+psycopg2-binary = {version = "^2.9.6"}
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+start = "app.server:run"
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl/cpu"
+secondary = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

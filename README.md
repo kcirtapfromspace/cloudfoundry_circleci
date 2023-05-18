@@ -179,6 +179,15 @@ StagingError - Staging error: staging failed
 FAILED
 ```
 
+### Push App
+
+```
+CF_DOCKER_PASSWORD=$GITHUB_PAT cf push pybert --docker-image ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest --docker-username ecapsmorfkcirtap --no-route --no-start
+```
+
+### Restage App
+Restaging is required to get the new docker image to run.  This is because the docker image is not stored in the droplet cache.  The droplet cache is where the droplet is stored.  The droplet is the compiled version of the app.  The droplet is what is actually run by the container.  The droplet cache is stored on the container host.  The container host is the VM that the container is running on.  The container host is managed by the Diego scheduler.  The Diego scheduler is part of the Cloud Foundry control plane.  The Cloud Foundry control plane is the part of Cloud Foundry that manages the VMs that run the containers.  The Cloud Foundry control plane is managed by the BOSH director.  The BOSH director is the part of Cloud Foundry that manages the VMs that run the Cloud Found
+
 ### Docker image size
 One was was to look for anything to chop out of the container image. The following command will list the top 10 largest files in the container image.  This is a good place to start looking for things to chop out of the container image.
 
