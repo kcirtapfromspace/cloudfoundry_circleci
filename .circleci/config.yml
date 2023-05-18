@@ -55,9 +55,10 @@ jobs:
             OUTPUT_FILE: /tmp/artifacts/syft_sbom.json
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
-              echo $GITHUB_PAT | ./syft login ghcr.io -u $GITHUB_USERNAME --password-stdin 
+            ./syft login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_PAT
             ./syft packages "$IMAGE_NAME" --scope AllLayers -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" 
             echo "scan results saved in $OUTPUT_FILE"
+          # echo $GITHUB_PAT | ./syft login ghcr.io -u $GITHUB_USERNAME --password-stdin 
       - run:
           name: Grype Docker image
           environment:
