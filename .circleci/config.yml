@@ -9,6 +9,44 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
+  buildpacks/build:
+    executor: base-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - pack/build:
+          builder: paketobuildpacks/builder:base
+          buildpacks: 
+            - paketo-buildpacks/python
+            - paketo-buildpacks/procfile
+          env:
+            BP_DEBUG: true
+          path: /tmp/workspace/src/bert
+          publish: false
+          pull-policy: if-not-present
+          trust-builder: true
+          # cache-image: true
+          # cache-image-name: pybert
+          # cache-image-tag: latest
+          # cache-image-pull-policy: if-not-present
+          # cache-image-path: /tmp/workspace/images/pybert.tgz
+          # cache-image-registry: ghcr.io
+          # cache-image-username: $GITHUB_USERNAME
+          # cache-image-password: $GITHUB_PAT
+          # cache-image-build-args:
+          #   - HTTP_PROXY
+          #   - HTTPS_PROXY
+          #   - NO_PROXY
+          #   - http_proxy
+          #   - https_proxy
+          #   - no_proxy
+          #   - PIP_INDEX_URL
+          #   - PIP_TRUSTED_HOST
+          #   - PIP_EXTRA_INDEX_URL
+          #   - PIP_NO_CACHE_DIR
+          #   - PIP_DISABLE_PIP_VERSION_CH
+
   # paketo_build:
   #   executor: base-executor
   #   steps:
