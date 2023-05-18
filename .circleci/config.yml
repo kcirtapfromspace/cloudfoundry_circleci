@@ -9,7 +9,7 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
-  buildpacks/build:
+  paketo_build:
     executor: base-executor
     steps:
       - checkout
@@ -228,8 +228,8 @@ workflows:
           filters:
             branches:
               only: main
-      # - paketo_build
-      - buildpacks/build
+      - paketo_build
+      # - buildpacks/build
       - publish:
           requires:
             - paketo_build
