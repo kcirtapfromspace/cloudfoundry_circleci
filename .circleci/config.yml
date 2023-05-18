@@ -51,23 +51,24 @@ jobs:
           environment:
             SYFT_VERSION: v0.80.0
             IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
-            OUTPUT_FORMAT: json
+            OUTPUT_FORMAT: github-json
             OUTPUT_FILE: /tmp/artifacts/syft.json
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
-            ./syft "$IMAGE_NAME" --scope AllLayers --debug  -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" 
+              echo $GITHUB_PAT | ./syft login ghcr.io -u $GITHUB_USERNAME --password-stdin 
+            ./syft packages "$IMAGE_NAME" --scope AllLayers -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" 
             echo "scan results saved in $OUTPUT_FILE"
       - run:
           name: Grype Docker image
           environment:
             GRYPE_VERSION: v0.61.1
             IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
-            OUTPUT_FORMAT: json
+            OUTPUT_FORMAT: sarif
             OUTPUT_FILE: /tmp/artifacts/grype.json
 
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$GRYPE_VERSION"
-            ./grype "$IMAGE_NAME" -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}"  --debug 
+            ./grype "$IMAGE_NAME"  --scope AllLayers --only-fixed --by-cve --output sarif-o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}"  --debug 
             echo "scan results saved in $OUTPUT_FILE"
       - store_artifacts:
           path: /tmp/artifacts
