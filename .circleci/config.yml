@@ -1,13 +1,23 @@
 version: 2.1
-# orbs:
-#   grype: anchore/grype@0.2.0
 
+orbs:
+  pack: buildpacks/pack@0.2.4
+#   grype: anchore/grype@0.2.0
 executors:
   base-executor:
     docker:
       - image: cimg/base:2023.05
 
 jobs:
+  publish:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          command: |
+            docker load -i /tmp/workspace/images/myimage.tgz
+            docker push myimage
   build_bert_model:
     # resource_class: small # specify a resource class
     executor: base-executor
@@ -166,6 +176,17 @@ workflows:
           requires:
             - build_bert_model
             - list-container-vulnerabilities
+          filters:
+            branches:
+              only: main
+      - buildpacks/build:
+          builder: paketobuildpacks/builder:base
+          buildpack: paketo-buildpacks/python
+          image-file: pybert.tgz
+          image-name: pybert
+      - publish:
+          requires:
+            - buildpacks/build
           filters:
             branches:
               only: main
