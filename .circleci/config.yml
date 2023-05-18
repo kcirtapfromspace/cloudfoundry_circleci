@@ -9,6 +9,17 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
+  paketo_build:
+    executor: base-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - buildpacks/build:
+          builder: paketobuildpacks/builder:base
+          buildpack: paketo-buildpacks/python
+          image-file: pybert.tgz
+          image-name: pybert
   publish:
     machine: true
     steps:
@@ -50,7 +61,7 @@ jobs:
       #     root: /tmp/artifacts
       #     paths:
       #       - vendor
-  list-container-vulnerabilities:
+  list_container_vulnerabilities:
     executor: base-executor
     steps:
       - run:
@@ -136,37 +147,37 @@ jobs:
 
 
 # Cron job to run every night at UTC (1am EST)\
-  cron_task:
-    executor: base-executor
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Install Cloud Foundry
-          command: |
-            # ...first add the Cloud Foundry Foundation public key and package repository to your system
-            wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
-            echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
-            # ...then, update your local package index, then finally install the cf CLI
-            sudo apt-get update
-            sudo apt-get install cf8-cli
-      - run:
-          name: Login to Cloud Foundry
-          command: |
-            cf login -a $CF_API -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s $CF_SPACE
-      - run:
-          name: Deploy to Cloud Foundry
-          command: |
-            cf run-task Python_Bert --start-command "python3 cleaned_bert_similarity.py"
+  # cron_task:
+  #   executor: base-executor
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker:
+  #         docker_layer_caching: true
+  #     - run:
+  #         name: Install Cloud Foundry
+  #         command: |
+  #           # ...first add the Cloud Foundry Foundation public key and package repository to your system
+  #           wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+  #           echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+  #           # ...then, update your local package index, then finally install the cf CLI
+  #           sudo apt-get update
+  #           sudo apt-get install cf8-cli
+  #     - run:
+  #         name: Login to Cloud Foundry
+  #         command: |
+  #           cf login -a $CF_API -u $CF_USERNAME -p $CF_PASSWORD -o $CF_ORG -s $CF_SPACE
+  #     - run:
+  #         name: Deploy to Cloud Foundry
+  #         command: |
+  #           cf run-task Python_Bert --start-command "python3 cleaned_bert_similarity.py"
 
       
 
 workflows:
-  build-test-and-deploy:
+  build_test_and_deploy:
     jobs:
       - build_bert_model
-      - list-container-vulnerabilities:
+      - list_container_vulnerabilities:
           requires:
             - build_bert_model
           filters:
@@ -175,17 +186,11 @@ workflows:
       - deploy_cloud_foundry:
           requires:
             - build_bert_model
-            - list-container-vulnerabilities
+            - list_container_vulnerabilities
           filters:
             branches:
               only: main
-
-      - buildpacks/build:
-          builder: paketobuildpacks/builder:base
-          buildpack: paketo-buildpacks/python
-          image-file: pybert.tgz
-          image-name: pybert
-
+      - paketo_build
       - publish:
           requires:
             - paketo_build
