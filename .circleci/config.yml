@@ -54,7 +54,7 @@ jobs:
             OUTPUT_FORMAT: json
             OUTPUT_FILE: /tmp/artifacts/syft.json
           command: |
-            curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
+            curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
             ./syft "$IMAGE_NAME" -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" --scope AllLayers --only-fixed --by-cve  --debug
             echo "scan results saved in $OUTPUT_FILE"
       - run:
@@ -64,6 +64,7 @@ jobs:
             IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
             OUTPUT_FORMAT: json
             OUTPUT_FILE: /tmp/artifacts/grype.json
+
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$GRYPE_VERSION"
             ./grype "$IMAGE_NAME" -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}"  --debug 
