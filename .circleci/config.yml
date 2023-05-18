@@ -60,7 +60,7 @@ jobs:
             SYFT_VERSION: 0.80.0
             IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
             OUTPUT_FORMAT: json
-            OUTPUT_FILE: /tmp/artifacts/syft.json
+            OUTPUT_FILE: /tmp/artifacts/grype.json
             debugFlag: --debug
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
