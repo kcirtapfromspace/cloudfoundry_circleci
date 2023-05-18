@@ -1,7 +1,4 @@
 version: 2.1
-
-orbs:
-  pack: buildpacks/pack@0.2.4
   
 executors:
   base-executor:
@@ -10,7 +7,8 @@ executors:
 
 jobs:
   vendor_artifacts:
-    executor: cimg/python:15.3.0
+    docker:
+      - image: cimg/python:15.3.0
     steps:
       - checkout
       - run: python --version
