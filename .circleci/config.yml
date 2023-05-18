@@ -24,12 +24,29 @@ jobs:
             echo $GITHUB_PAT | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG 
             docker push ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest
-      # - run:
-      #     name: Syft Docker image
-      #     command: |
-      #       TAG="0.1.${CIRCLE_BUILD_NUM}"
-      #       curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-      #       syft -vvv ghcr.io/kcirtapfromspace/cloudfoundry_circleci:$TAG
+      - run:
+          name: Syft Docker image
+          environment:
+            SYFT_VERSION: 0.80.0
+            IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
+            OUTPUT_FORMAT: json
+            OUTPUT_FILE: /tmp/artifacts/syft.json
+          command: |
+            curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
+            ./syft "$IMAGE_NAME" -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" --scope AllLayers --only-fixed --by-cve  --debug
+            echo "scan results saved in $OUTPUT_FILE"
+      - run:
+          name: Grype Docker image
+          environment:
+            SYFT_VERSION: 0.80.0
+            IMAGE_NAME: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:0.1.${CIRCLE_BUILD_NUM}
+            OUTPUT_FORMAT: json
+            OUTPUT_FILE: /tmp/artifacts/syft.json
+            debugFlag: --debug
+          command: |
+            curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
+            ./grype "$IMAGE_NAME" -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}"  --debug 
+            echo "scan results saved in $OUTPUT_FILE"
 
       # - run:
       #     name: Copy vendor folder from Docker image
@@ -41,8 +58,8 @@ jobs:
       #       docker create --name temp-container artifact_build_image:$TAG
       #       docker cp temp-container:/vendor /tmp/artifacts/vendor
       #       docker rm temp-container
-      # - store_artifacts:
-      #     path: /tmp/artifacts
+      - store_artifacts:
+          path: /tmp/artifacts
       # - persist_to_workspace:
       #     root: /tmp/artifacts
       #     paths:
