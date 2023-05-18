@@ -10,7 +10,7 @@ executors:
 
 jobs:
   paketo_build:
-    executor: base-executor
+    machine: true
     steps:
       - checkout
       - attach_workspace:
