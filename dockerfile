@@ -45,7 +45,7 @@ ENV PYTHONPATH "${PYTHONPATH}:/opt/venv/lib/python${PYTHON_VERSION}/site-package
 COPY  ./src/**/*.py /opt/venv/
 COPY --from=python_base /opt/venv/ /opt/venv/
 # COPY --from=python_base /usr/lib/ /usr/lib/
-COPY --from=python_base /usr/local/lib/ /usr/local/lib/
+# COPY --from=python_base /usr/local/lib/ /usr/local/lib/
 ENV SPARK_HOME=/opt
 ENV PATH=$PATH:/opt/bin
 ENV PATH /opt/venv/bin:$PATH
