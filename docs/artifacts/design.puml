@@ -6,7 +6,7 @@ Person(developer, " Developer", " vendor developers and GTM")
 Boundary(aws, "AWS") {
   Boundary(cloudgov, "cloudfoundry") {
     System_Ext(aws_alb, "cloudfoundry load-balancer", "AWS ALB")
-    System_Ext(cloudgov_api, "cloudfoundry API")
+    System_Ext(cloudfoundry_api, "cloudfoundry API")
     System_Ext(cloudgov_router, "<&layers> cloudfoundry routers", "Cloud Foundry traffic service")
     Boundary(atob, "Accreditation Boundary") {
       Container(analytic_app, " Analytic Application", "Python", "Perform background work and data processing")
@@ -33,15 +33,24 @@ BiRel(analytic_app, analytic_s3, "reads/writes data content", "vpc endpoint")
 Boundary(development_saas, "CI/CD Pipeline") {
   System_Ext(github, "GitHub", "code repository, container registry")
   System_Ext(circleci, "CircleCI", "Continuous Integration Service")
-  Boundary(ci_cd, "CircleCI - CI/CD Workflow") {
-    System_Ext(build_container, "CircleCI - Clair", "Container Build")
-    System_Ext(clair, "CircleCI - Clair", "Vulerability Scanning")
-    System_Ext(publish_container, "CircleCI - Push Container", "Publish Container")
+  Boundary(ci_cd, "CircleCI - Workflow") {
+    System_Ext(build_container, "Docker / OCI", "Container Image")
+    System_Ext(static_code, "Static Code Analysis", "SBOMs, Vulnerability Scanning")
+    System_Ext(publish_container, "Container", "Publish Container")
+    ' System_Ext(push_container, "Cloudfoundry", "Push App")
+
   }
 }
 Rel(developer, github, "Publish code", "git ssh (22)")
 Rel(github, circleci, "Commit hook notifies CircleCI to run CI/CD pipeline")
-Rel(circleci, cloudgov_api, "Deploy application on successful CI/CD run")
+Rel(circleci, cloudfoundry_api, "Deploy application on successful CI/CD run")
+Rel(circleci, build_container, "Build container image from Dockerfile")
+Rel(build_container, static_code, "Scan container image for vulnerabilities")
+Rel(static_code, publish_container , "Pass or fail container based on static code analysis")
+Rel(build_container, publish_container, "Publish container if no vulnerabilities found")
+Rel(publish_container, github, "Push container to github container registry")
+' Rel(publish_container, push_container, "Push container to cloudfoundry")
+' Rel(github, cloudfoundry_api, "Pulls container from container registry")
 Lay_D(personnel, aws)
 [personnel] -r-> [analytic_app]
 @enduml
