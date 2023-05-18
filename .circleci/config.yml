@@ -15,7 +15,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - buildpacks/pack/pack-build:
+      - buildpacks/pack-build:
           builder: paketobuildpacks/builder:base
           buildpacks: 
             - paketo-buildpacks/python
