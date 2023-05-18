@@ -16,11 +16,12 @@ RUN python3 -m venv $VIRTUAL_ENV && \
     $VIRTUAL_ENV/bin/python3 -m pip install -U --upgrade pip --no-cache-dir && \
     $VIRTUAL_ENV/bin/pip install --upgrade setuptools wheel psutil cleanpy --no-cache-dir && \
     $VIRTUAL_ENV/bin/pip install --upgrade torch==${TORCH_VERSION}+cpu torchvision==${TORCHVISION_VERSION}+cpu torchaudio==${TORCHAUDIO_VERSION} --index-url https://download.pytorch.org/whl/cpu --no-cache-dir && \
-    $VIRTUAL_ENV/bin/pip install -r requirements.txt --no-cache-dir  && \
-    apt-get purge -y --auto-remove gcc python3-dev apt-utils && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
-    cleanpy -v -f -a /opt/venv/
+    $VIRTUAL_ENV/bin/pip install -r requirements.txt --no-cache-dir 
+    #  && \
+    # apt-get purge -y --auto-remove gcc python3-dev apt-utils && \
+    # rm -rf /var/lib/apt/lists/* && \
+    # apt-get clean && \
+    # cleanpy -v -f -a /opt/venv/
     # Remove any weight that we can to keep under the 2048MB limit of Cloud Foundry
     # rm -rf /root/.cache/pip && \
     # rm -rf /usr/local/lib/python3.9/distutils && \
@@ -30,6 +31,9 @@ RUN python3 -m venv $VIRTUAL_ENV && \
 
 # Python artifact stage
 FROM python_base as artifact_build
+ENV TORCH_VERSION=2.0.1
+ENV TORCHVISION_VERSION=0.15.2
+ENV TORCHAUDIO_VERSION=2.0.2
 WORKDIR /vendor
 COPY  ./src/bert/requirements.txt .
 RUN  --mount=type=cache,target=/root/.cache \ 
@@ -37,8 +41,8 @@ RUN  --mount=type=cache,target=/root/.cache \
         torch==${TORCH_VERSION}+cpu \
         torchvision==${TORCHVISION_VERSION}+cpu \
         torchaudio==${TORCHAUDIO_VERSION} \
-        --index-url https://download.pytorch.org/whl/cpu --no-cache-dir --no-binary=:none: && \    
-    python3 -m pip download -r requirements.txt --no-binary=:none: --no-cache-dir
+        --index-url https://download.pytorch.org/whl/cpu --no-binary=:none: --no-cache-dir 
+RUN python3 -m pip download -r requirements.txt --no-binary=:none: --no-cache-dir
 
 # Final stage
 FROM gcr.io/distroless/python3-debian11:debug as final
