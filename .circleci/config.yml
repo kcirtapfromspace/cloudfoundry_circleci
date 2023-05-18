@@ -9,22 +9,20 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
-  paketo_build:
-    machine: true
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - buildpacks/build:
-          builder: paketobuildpacks/builder:base
-          buildpacks: 
-            - paketo-buildpacks/python
-            - paketo-buildpacks/procfile
-          env-vars:
-            BP_DEBUG: true
-          working-directory: /tmp/workspace/src/bert
-          image-name: pybert
-          image-file: pybert.tgz
+  # paketo_build:
+  #   machine: true
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: /tmp/workspace
+  #     - buildpacks/build:
+  #         builder: paketobuildpacks/builder:base
+  #         buildpack: paketo-buildpacks/python
+  #         env-vars:
+  #           BP_DEBUG: true
+  #         working-directory: /tmp/workspace/src/bert
+  #         image-name: pybert
+  #         image-file: pybert.tgz
           # publish: false
           # pull-policy: if-not-present
           # trust-builder: true
@@ -60,15 +58,15 @@ jobs:
   #         buildpack: paketo-buildpacks/python
   #         image-file: pybert.tgz
   #         image-name: pybert
-  publish:
-    machine: true
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - run:
-          command: |
-            docker load -i /tmp/workspace/images/pybert.tgz
-            docker push pybert
+  # publish:
+  #   machine: true
+  #   steps:
+  #     - attach_workspace:
+  #         at: /tmp/workspace
+  #     - run:
+  #         command: |
+  #           docker load -i /tmp/workspace/images/pybert.tgz
+  #           docker push pybert
   build_bert_model:
     # resource_class: small # specify a resource class
     executor: base-executor
@@ -230,11 +228,6 @@ workflows:
           filters:
             branches:
               only: main
-      - paketo_build
-      # - buildpacks/build
-      - publish:
-          requires:
-            - paketo_build
-          filters:
-            branches:
-              only: main
+      - buildpacks/build:
+          builder: paketobuildpacks/builder:base
+          buildpack: paketo-buildpacks/python
