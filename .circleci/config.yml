@@ -214,6 +214,9 @@ jobs:
 workflows:
   build_test_and_deploy:
     jobs:
+      - buildpacks/build:
+          builder: paketobuildpacks/builder:base
+          buildpack: paketo-buildpacks/python
       - build_bert_model
       - list_container_vulnerabilities:
           requires:
@@ -228,6 +231,3 @@ workflows:
           filters:
             branches:
               only: main
-      - buildpacks/build:
-          builder: paketobuildpacks/builder:base
-          buildpack: paketo-buildpacks/python
