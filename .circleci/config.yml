@@ -9,7 +9,7 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
-  build:
+  buildpacks/build:
     executor: base-executor
     steps:
       - checkout
