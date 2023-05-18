@@ -177,6 +177,7 @@ workflows:
 
   build_test_and_deploy:
     jobs:
+      - vendor_artifacts
       - build_bert_model
       - list_container_vulnerabilities:
           requires:
