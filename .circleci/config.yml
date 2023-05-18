@@ -15,17 +15,19 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - buildpacks/pack-build:
+      - buildpacks/build:
           builder: paketobuildpacks/builder:base
           buildpacks: 
             - paketo-buildpacks/python
             - paketo-buildpacks/procfile
-          env:
+          env-vars:
             BP_DEBUG: true
-          path: /tmp/workspace/src/bert
-          publish: false
-          pull-policy: if-not-present
-          trust-builder: true
+          working-directory: /tmp/workspace/src/bert
+          image-name: pybert
+          image-file: pybert.tgz
+          # publish: false
+          # pull-policy: if-not-present
+          # trust-builder: true
           # cache-image: true
           # cache-image-name: pybert
           # cache-image-tag: latest
