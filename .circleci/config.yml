@@ -55,7 +55,7 @@ jobs:
             OUTPUT_FILE: /tmp/artifacts/syft.json
           command: |
             curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . "$SYFT_VERSION"
-            ./syft "$IMAGE_NAME" -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" --scope AllLayers --only-fixed --by-cve  --debug
+            ./syft "$IMAGE_NAME" --scope AllLayers --only-fixed --by-cve  --debug -o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}" 
             echo "scan results saved in $OUTPUT_FILE"
       - run:
           name: Grype Docker image
