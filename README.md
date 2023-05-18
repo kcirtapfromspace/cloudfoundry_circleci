@@ -194,3 +194,24 @@ rm -rf /usr/local/lib/python3.9/site-packages/pip/_vendor/ && \
 find /opt/venv/ -type d \( -name 'tests' -o -name 'test' -o -name 'testing' \) -exec rm -rf {} + && \
 find /opt/venv/ -type f \( -name '*_test.py' -o -name 'test.py' \) -delete
 ```
+
+### Poetry
+Went down a rabbit hole trying to use poetry in an attempt give more control with package installation 
+but it was not worth the effort.  Poetry is a great tool but it is not a good fit for this project.
+
+I like that poetry creates a virtual environment for the project and it is easy to install packages
+also like that it creates a lock file to ensure that the same versions of packages are installed
+there is the plugins like black that can be used to enforce code style. 
+
+## BuildPacks
+Pursued paketo buildpacks 
+   really only has x86_64 support which makes a chicken and egg problem for building the buildpacks as running arm64 macos 
+ it is possble but there was lengthy workaround documentation. 
+
+ I really like that paketo can build an efficient container image with minimal effort.
+
+# Container Vulnerabilties. 
+gyrpe & sift are eazy to use locally, but challenges arise when trying to use the circleci orbs
+snyk is a good option but requires a paid account to use in a CI pipeline.
+trivy is a good option but requires a paid account to use in a CI pipeline.
+need to explore clair more. 
