@@ -9,15 +9,15 @@ executors:
       - image: cimg/base:2023.05
 
 jobs:
-  # paketo_build:
-  #   machine: true
-  #   steps:
-  #     - checkout
-  #     - attach_workspace:
-  #         at: /tmp/workspace
-  #     - buildpacks/build:
-  #         builder: paketobuildpacks/builder:base
-  #         buildpack: paketo-buildpacks/python
+  build:
+    executor: base-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - buildpacks/build:
+          builder: paketobuildpacks/builder:base
+          buildpack: paketo-buildpacks/python
   #         env-vars:
   #           BP_DEBUG: true
   #         working-directory: /tmp/workspace/src/bert
@@ -214,9 +214,6 @@ jobs:
 workflows:
   build_test_and_deploy:
     jobs:
-      - buildpacks/build:
-          builder: paketobuildpacks/builder:base
-          buildpack: paketo-buildpacks/python
       - build_bert_model
       - list_container_vulnerabilities:
           requires:
@@ -231,3 +228,4 @@ workflows:
           filters:
             branches:
               only: main
+      - buildpacks/build
