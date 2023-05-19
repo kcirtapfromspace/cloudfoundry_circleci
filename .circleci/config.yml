@@ -19,7 +19,7 @@ jobs:
           name: Install Python dependencies
           command: |
             python3 -m pip install --upgrade pip
-            pip download torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu -d vendor
+            pip download torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu   -d vendor
             pip download -r src/bert/requirements.txt -d vendor
       - run:
           name: Copy vendor folder
@@ -172,7 +172,8 @@ jobs:
       - run:
           name: Deploy to Cloud Foundry
           command: |
-            ls -la
+            pwd
+            ls -lAhRd
             cp -r /tmp/artifacts/local/vendor ./vendor 
             cd src/bert
             cf push vendor_bert \

@@ -2,3 +2,6 @@
 .circleci/config.yml
 artifacts/**/
 **/vendor/**
+.circleci/config.yml
+**/venv/**
+venv/**
