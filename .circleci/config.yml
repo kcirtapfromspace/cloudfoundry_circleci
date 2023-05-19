@@ -49,7 +49,7 @@ jobs:
           name: Copy vendor folder from Docker image
           command: |
             export DOCKER_BUILDKIT=1
-            mkdir -p /tmp/artifacts
+            mkdir -p /tmp/artifacts/docker
             TAG="0.1.${CIRCLE_BUILD_NUM}"
             docker build --target artifact_build -t artifact_build_image:$TAG .
             docker create --name temp-container artifact_build_image:$TAG
