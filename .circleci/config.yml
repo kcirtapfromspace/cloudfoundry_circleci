@@ -4,7 +4,7 @@ executors:
   base-executor:
     docker:
       - image: cimg/base:2023.05
-    working_directory: /tmp
+    working_directory: /tmp/workspace
 
 jobs:
   vendor_artifacts:
