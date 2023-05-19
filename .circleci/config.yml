@@ -4,6 +4,7 @@ executors:
   base-executor:
     docker:
       - image: cimg/base:2023.05
+    working_directory: /tmp
 
 jobs:
   vendor_artifacts:
@@ -25,8 +26,10 @@ jobs:
           command: |
             mkdir -p /tmp/artifacts/local
             cp -r vendor /tmp/artifacts/local/vendor
+      - store_artifacts:
+          path: /tmp/artifacts
       - persist_to_workspace:
-          root: /tmp/artifacts/local/
+          root: /tmp/artifacts/local
           paths:
             - vendor
 
@@ -56,7 +59,7 @@ jobs:
             docker cp temp-container:/vendor /tmp/artifacts/docker/vendor
             docker rm temp-container
       - persist_to_workspace:
-          root: /tmp/artifacts/docker/
+          root: /tmp/artifacts/docker
           paths:
             - vendor
 
@@ -66,7 +69,7 @@ jobs:
     steps:
       - run:
           command: |
-            mkdir -p /tmp/artifacts
+            mkdir -p /tmp/artifacts/scans
       - run:
           name: Syft Docker image
           environment:
@@ -103,7 +106,7 @@ jobs:
       #       ./grype "$IMAGE_NAME"  --scope AllLayers --only-fixed --by-cve --output sarif-o "$OUTPUT_FORMAT" > "${OUTPUT_FILE}"  --debug 
       #       echo "scan results saved in $OUTPUT_FILE"
       - store_artifacts:
-          path: /tmp/artifacts
+          path: /tmp/artifacts/scans
 
       # - grype/scan-image:
       #     image-name: ghcr.io/kcirtapfromspace/cloudfoundry_circleci:latest # grype will pull this image from docker.io, by default, check the scan-image command for more options 
@@ -116,8 +119,6 @@ jobs:
     executor: base-executor
     steps:
       - checkout
-      - attach_workspace:
-          at: src/bert
       - setup_remote_docker:
           docker_layer_caching: true
       - run: 
@@ -153,8 +154,6 @@ jobs:
     executor: base-executor
     steps:
       - checkout
-      - attach_workspace:
-          at: src/bert
       - run:
           name: Install Cloud Foundry
           command: |
@@ -172,6 +171,7 @@ jobs:
           name: Deploy to Cloud Foundry
           command: |
             cp -r /tmp/artifacts/local/vendor ./vendor 
+            cd src/bert
             cf push vendor_bert \
               -k 4G \
               -m 3G \
