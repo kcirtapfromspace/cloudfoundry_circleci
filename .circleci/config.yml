@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Copy vendor folder
           command: |
-            mkdir -p /tmp/artifacts
+            mkdir -p /tmp/artifacts/local
             cp -r vendor /tmp/artifacts/vendor
       - persist_to_workspace:
           root: /tmp/artifacts/local/
