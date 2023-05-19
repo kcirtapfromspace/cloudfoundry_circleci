@@ -58,6 +58,8 @@ jobs:
             docker create --name temp-container artifact_build_image:$TAG
             docker cp temp-container:/vendor /tmp/artifacts/docker/vendor
             docker rm temp-container
+      - store_artifacts:
+          path: /tmp/artifacts/docker
       - persist_to_workspace:
           root: /tmp/artifacts/docker
           paths:
@@ -170,6 +172,7 @@ jobs:
       - run:
           name: Deploy to Cloud Foundry
           command: |
+            ls -la
             cp -r /tmp/artifacts/local/vendor ./vendor 
             cd src/bert
             cf push vendor_bert \
