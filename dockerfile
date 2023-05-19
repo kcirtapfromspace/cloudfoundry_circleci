@@ -48,6 +48,11 @@ RUN  $VIRTUAL_ENV/bin/pip download  \
         # torchaudio>=${TORCHAUDIO_VERSION} \
         # --index-url https://download.pytorch.org/whl/cpu  \
         -d /vendor --no-cache-dir 
+FROM buildpacksio/pack:latest as buildpack
+WORKDIR /builder
+COPY ./src/bert/requirements.txt .
+COPY --from=artifact_build /vendor/ vendor/
+RUN pack build bert-base --builder paketobuildpacks/builder:base --buildpack paketo-buildpacks/python  --sbom-output-dir /artifacts --report-output-dir /artifacts
 
 # Final stage
 FROM gcr.io/distroless/python3-debian11:debug as final
