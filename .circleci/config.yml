@@ -173,7 +173,7 @@ jobs:
           name: Deploy to Cloud Foundry
           command: |
             pwd
-            ls -lAhRd
+            ls -lAhRd /tmp
             cp -r /tmp/artifacts/local/vendor ./vendor 
             cd src/bert
             cf push vendor_bert \
