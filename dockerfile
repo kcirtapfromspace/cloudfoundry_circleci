@@ -48,6 +48,7 @@ RUN  $VIRTUAL_ENV/bin/pip download  \
         # torchaudio>=${TORCHAUDIO_VERSION} \
         # --index-url https://download.pytorch.org/whl/cpu  \
         -d /vendor --no-cache-dir 
+        
 FROM buildpacksio/pack:latest as buildpack
 WORKDIR /builder
 COPY ./src/bert/requirements.txt .
