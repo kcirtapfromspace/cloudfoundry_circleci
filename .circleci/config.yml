@@ -53,16 +53,16 @@ jobs:
           command: |
             export DOCKER_BUILDKIT=1
             mkdir -p /tmp/artifacts/docker
-            mkdir -p /tmp/artifacts/buildpack
+            # mkdir -p /tmp/artifacts/buildpack
             TAG="0.1.${CIRCLE_BUILD_NUM}"
-            # docker build --target artifact_build -t artifact_build_image:$TAG .
-            docker build --target buildpack -t buildpack:$TAG .
+            docker build --target artifact_build -t artifact_build_image:$TAG .
+            # docker build --target buildpack -t buildpack:$TAG .
             docker create --name temp-vendor artifact_build_image:$TAG
-            docker create --name temp-buildpack buildpack:$TAG
+            # docker create --name temp-buildpack buildpack:$TAG
             docker cp temp-vendor:/vendor /tmp/artifacts/docker/vendor
-            docker cp temp-buildpack:/artifacts /tmp/artifacts/buildpack/
+            # docker cp temp-buildpack:/artifacts /tmp/artifacts/buildpack/
             docker rm temp-container
-            docker rm temp-buildpack
+            # docker rm temp-buildpack
       - store_artifacts:
           path: /tmp/artifacts/docker
       - persist_to_workspace:
