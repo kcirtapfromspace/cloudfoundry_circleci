@@ -69,7 +69,16 @@ jobs:
           root: /tmp/artifacts/docker
           paths:
             - vendor
-
+      - run:
+          name: Run Buildpack locally
+          command: |
+            cd src/bert
+            docker run -it  \                                        
+            -v $PWD:/workspace -w /workspace \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            buildpacksio/pack:latest build bert-base \
+              --builder paketobuildpacks/builder:base \
+              --buildpack paketo-buildpacks/python
 
   list_container_vulnerabilities:
     executor: base-executor
