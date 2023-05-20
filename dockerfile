@@ -49,11 +49,17 @@ RUN  $VIRTUAL_ENV/bin/pip download  \
         # --index-url https://download.pytorch.org/whl/cpu  \
         -d /vendor --no-cache-dir 
         
-FROM buildpacksio/pack:latest as buildpack
+FROM python:${PYTHON_VERSION}-slim-bullseye as buildpack
 WORKDIR /builder
 COPY ./src/bert/requirements.txt .
 COPY --from=artifact_build /vendor/ vendor/
-RUN pack build bert-base --builder paketobuildpacks/builder:base --buildpack paketo-buildpacks/python  --sbom-output-dir /artifacts --report-output-dir /artifacts
+RUN apt-get update && apt-get install -y curl ca-certificates
+RUN curl -sSL "https://github.com/buildpacks/pack/releases/download/v0.29.0/pack-v0.29.0-linux.tgz" | tar -C /usr/local/bin/ --no-same-owner -xzv pack 
+RUN  /usr/local/bin/pack build bert-base \
+        --builder paketobuildpacks/builder:base \
+        --buildpack paketo-buildpacks/python  \
+        --sbom-output-dir /artifacts \
+        --report-output-dir /artifacts
 
 # Final stage
 FROM gcr.io/distroless/python3-debian11:debug as final
