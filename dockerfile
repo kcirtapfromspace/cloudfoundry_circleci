@@ -56,6 +56,7 @@ COPY --from=artifact_build /vendor/ vendor/
 RUN apt-get update && apt-get install -y curl ca-certificates
 RUN curl -sSL "https://github.com/buildpacks/pack/releases/download/v0.29.0/pack-v0.29.0-linux.tgz" | tar -C /usr/local/bin/ --no-same-owner -xzv pack 
 RUN  /usr/local/bin/pack build bert-base \
+        --docker-host inherit \
         --builder paketobuildpacks/builder:base \
         --buildpack paketo-buildpacks/python  \
         --sbom-output-dir /artifacts \
