@@ -75,7 +75,7 @@ jobs:
           name: Run Buildpack locally
           command: |
             cd src/bert
-            docker run -it  \                                        
+            docker run  \                                        
             -v $PWD:/workspace -w /workspace \
             -v /var/run/docker.sock:/var/run/docker.sock \
             buildpacksio/pack:latest build bert-base \
