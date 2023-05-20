@@ -57,7 +57,7 @@ jobs:
             docker build --target artifact_build -t artifact_build_image:$TAG .
             docker create --name temp-vendor artifact_build_image:$TAG
             docker cp temp-vendor:/vendor /tmp/artifacts/docker/vendor
-            docker rm temp-container
+          # docker rm temp-container
 
           # mkdir -p /tmp/artifacts/buildpack
           # docker build --target buildpack -t buildpack:$TAG .
