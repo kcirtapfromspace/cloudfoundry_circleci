@@ -81,7 +81,7 @@ jobs:
             -v $PWD:/workspace -w /workspace \
             --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
             buildpacksio/pack:latest build bert-base \
-              --log-level debug
+              --verbose
               --builder paketobuildpacks/builder:base \
               --buildpack paketo-buildpacks/python
 
