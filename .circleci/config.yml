@@ -7,6 +7,26 @@ executors:
     working_directory: /tmp/workspace
 
 jobs:
+  buildpack:
+    executor: base-executor
+    steps:
+      - checkout
+      - run:
+          name: Run Buildpack locally
+          command: |
+            cd src/bert
+            cp -r /tmp/artifacts/docker/vendor .
+            ls -la
+            docker run --rm \
+            --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+            buildpacksio/pack:latest build bert-base \
+              --builder paketobuildpacks/builder:base \
+              --buildpack paketo-buildpacks/python \
+              --volume $PWD:/app:ro
+              --path app
+              --verbose
+              --env "BP_DEBUG=true"
+        # -v $PWD:/workspace -w /workspace \
   vendor_artifacts:
     docker:
       - image: cimg/python:3.11.3
@@ -71,22 +91,7 @@ jobs:
           root: /tmp/artifacts/docker
           paths:
             - vendor
-      - run:
-          name: Run Buildpack locally
-          command: |
-            cd src/bert
-            cp -r /tmp/artifacts/docker/vendor .
-            ls -la
-            docker run --rm \
-            --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
-            buildpacksio/pack:latest build bert-base \
-              --builder paketobuildpacks/builder:base \
-              --buildpack paketo-buildpacks/python \
-              --volume $PWD:/app:ro
-              --path app
-              --verbose
-              --env "BP_DEBUG=true"
-        # -v $PWD:/workspace -w /workspace \
+
 
   list_container_vulnerabilities:
     executor: base-executor
@@ -231,9 +236,9 @@ jobs:
       
 
 workflows:
-
   build_test_and_deploy:
     jobs:
+      - buildpack
       - vendor_artifacts
       - build_bert_model
       - list_container_vulnerabilities:
