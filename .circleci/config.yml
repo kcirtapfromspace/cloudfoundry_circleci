@@ -19,7 +19,7 @@ jobs:
           name: Install Python dependencies
           command: |
             python3 -m pip install --upgrade pip
-            pip download torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu   -d vendor
+            pip download torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu  -d vendor
             pip download -r src/bert/requirements.txt -d vendor
       - run:
           name: Copy vendor folder
@@ -75,7 +75,7 @@ jobs:
           name: Run Buildpack locally
           command: |
             cd src/bert
-            docker run  \                                        
+            docker run --rm \
             -v $PWD:/workspace -w /workspace \
             -v /var/run/docker.sock:/var/run/docker.sock \
             buildpacksio/pack:latest build bert-base \
