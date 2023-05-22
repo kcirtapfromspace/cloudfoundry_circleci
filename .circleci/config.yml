@@ -15,7 +15,6 @@ jobs:
           name: Run Buildpack locally
           command: |
             cd src/bert
-            cp -r /tmp/artifacts/docker/vendor .
             ls -la
             docker run --rm \
             --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
@@ -238,6 +237,7 @@ jobs:
 workflows:
   build_test_and_deploy:
     jobs:
+      
       - buildpack
       - vendor_artifacts
       - build_bert_model
