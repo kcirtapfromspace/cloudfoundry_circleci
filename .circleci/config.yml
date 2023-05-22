@@ -82,7 +82,8 @@ jobs:
             buildpacksio/pack:latest build bert-base \
               --builder paketobuildpacks/builder:base \
               --buildpack paketo-buildpacks/python \
-              --volume $PWD:/app:ro 
+              --volume $PWD:/app:ro
+              --path app
               --verbose
               --env "BP_DEBUG=true"
         # -v $PWD:/workspace -w /workspace \
