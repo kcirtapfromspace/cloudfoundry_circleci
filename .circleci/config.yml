@@ -75,6 +75,7 @@ jobs:
           name: Run Buildpack locally
           command: |
             cd src/bert
+            cp -r /tmp/artifacts/docker/vendor .
             docker run --rm \
             -v $PWD:/workspace -w /workspace \
             -v /var/run/docker.sock:/var/run/docker.sock \
