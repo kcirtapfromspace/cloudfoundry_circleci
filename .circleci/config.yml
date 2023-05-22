@@ -78,11 +78,12 @@ jobs:
             cp -r /tmp/artifacts/docker/vendor .
             ls -la
             docker run --rm \
-            -v $PWD:/workspace -w / \
+            -v $PWD:/workspace -w / workspace\
             --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
             buildpacksio/pack:latest build bert-base \
               --builder paketobuildpacks/builder:base \
               --buildpack paketo-buildpacks/python
+              --volume /workspace:/workspace:ro
               --verbose
 
   list_container_vulnerabilities:
