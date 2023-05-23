@@ -8,6 +8,7 @@ from cfenv import AppEnv
 from datagen import data_generator, stop_event
 from threading import Thread, Event
 from fastapi import FastAPI, Request, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from spacy_similarity import my_calc_similarity
@@ -27,6 +28,8 @@ logging.basicConfig(filename='app.log', level=logging.INFO,
 is_generating_data = False
 # Store the data generating thread globally
 data_gen_thread = None
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 @app.post('/start')
 def start_generating_data():

@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+<div class="background-element">
+    <div class="mask-overlay">
+    <div class="content">
 
 {% block content %}
-    <h1>Welcome to Our Application</h1>
+    <h1>Duplicate Goals NLP Demo</h1>
     <p>Data generation status: <span id="dataGenStatus">{{ is_generating_data }}</span></p>
     <button id="startButton">Start data generation</button>
     <button id="stopButton">Stop data generation</button>
@@ -66,4 +69,7 @@
         });
     });
     </script>
+    </div>
+</div>
+</div>
 {% endblock %}

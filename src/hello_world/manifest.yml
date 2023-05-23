@@ -1,0 +1,7 @@
+---
+applications:
+- name: hello_world
+  memory: 128M
+  random-route: true
+  path: ./
+  buildpack: python_buildpack
