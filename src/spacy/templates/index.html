@@ -7,6 +7,21 @@
     <div class="container">
         <h1>Welcome to Goals NLP Demo!</h1>
         <p>Dup City!!</p>
+        <p>Here are some options:</p>
+        <form method="POST" action="/start">
+            <input type="submit" value="Start generating data">
+        </form>
+        <form method="POST" action="/stop">
+            <input type="submit" value="Stop generating data">
+        </form>
+        <form method="POST" action="/clear">
+            <input type="submit" value="Clear data">        
+        </form>
+        {% if is_generating_data %}
+            <p>Data generation is currently running.</p>
+        {% else %}
+            <p>Data generation is currently stopped.</p>
+        {% endif %}
     <div>
         <h1>Select a User</h1>
         <form method="POST">

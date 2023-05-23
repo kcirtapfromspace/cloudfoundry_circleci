@@ -102,7 +102,6 @@ def data_generator():
     global goal_counter
 
     conn = connect_to_db()
-    # Use a context manager for the database connection
 
     with conn.cursor() as cur:
         fake = Faker()
@@ -111,51 +110,51 @@ def data_generator():
         cur.execute("""
             CREATE TABLE IF NOT EXISTS public.goals (
                 id uuid PRIMARY KEY,
-                goal text NOT NULL
+                goal text NOT NULL,
+                goal_user_id uuid NOT NULL
             );
         """)
+        cur.execute("""
+            ALTER TABLE public.goals 
+            ADD COLUMN IF NOT EXISTS goal_user_id uuid;
+        """)
 
-        num_iterations = 0  # Initialize a counter for the loop iterations
+        num_iterations = 0  
 
-        while num_iterations < 10000:  # Set a maximum number of iterations
-            goal_id = str(uuid.uuid4())
+        # generate 5 random unique user ids
+        user_ids = [str(uuid.uuid4()) for _ in range(50)]
+
+        while num_iterations < 10000:
+            # Randomly select a user id from generated user ids
+            goal_user_id = random.choice(user_ids)
 
             # Randomly select between predefined goals and fake generated ones
             if random.random() < 0.5:
                 goal_text = random.choice(predefined_goals)
             else:
-                # Generate a sentence of length 3 to 20 words
                 num_words = random.randint(3, 20)
                 goal_text = ' '.join(fake.words(nb=num_words))
 
-            # Use parameterized queries and error handling
+            goal_id = str(uuid.uuid4())
             try:
                 cur.execute(
-                    "INSERT INTO public.goals (id, goal) VALUES (%s, %s);",
-                    (goal_id, goal_text)
+                    "INSERT INTO public.goals (id, goal, goal_user_id) VALUES (%s, %s, %s);",
+                    (goal_id, goal_text, goal_user_id)
                 )
 
                 conn.commit()
 
-                # Increment the counter
                 goal_counter += 1
 
-                # Add a log statement to indicate that the insert was successful
-                print(f"Inserted goal {goal_id} with text: {goal_text}")
+                print(f"Inserted goal {goal_id} for user {goal_user_id} with text: {goal_text}")
 
             except Exception as e:
-                # Add a log statement to indicate that an error occurred
                 print(f"Error: {e}")
                 conn.rollback()
 
-            # Add a sleep timer
             sleep(1)
-            # Increment the counter
             num_iterations += 1
-            # Add a log statement to indicate that the loop is still running
         print("finished generating data!")
-
-
 
 if __name__ == "__main__":
     # Start the data generator in a separate thread
@@ -163,4 +162,5 @@ if __name__ == "__main__":
     thread.start()
 
     # Run the flask app
+    port = int(os.getenv("PORT", 5001))  # set a default port if none is provided by environment
     app.run(host='0.0.0.0', port=env.port)

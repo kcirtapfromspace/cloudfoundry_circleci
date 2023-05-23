@@ -4,4 +4,6 @@ applications:
   random-route: true
   path: ./
   buildpack: python_buildpack
+  services:
+  - postgresql-db
 
