@@ -1,51 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- header information goes here -->
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to Goals NLP Demo!</h1>
-        <p>Dup City!!</p>
-        <p>Here are some options:</p>
-        <form method="POST" action="/start">
-            <input type="submit" value="Start generating data">
-        </form>
-        <form method="POST" action="/stop">
-            <input type="submit" value="Stop generating data">
-        </form>
-        <form method="POST" action="/clear">
-            <input type="submit" value="Clear data">        
-        </form>
-        {% if is_generating_data %}
-            <p>Data generation is currently running.</p>
-        {% else %}
-            <p>Data generation is currently stopped.</p>
-        {% endif %}
-    <div>
-        <h1>Select a User</h1>
-        <form method="POST">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.user_id.label }}<br>
-                {{ form.user_id() }}
-            </p>
-            <p>{{ form.submit() }}</p>
-        </form>
-    </div>
-    {% if matched_goals %}
-    <div>
-        <h1>Matched Goals</h1>
-        <!-- Display matched goals in your preferred way here. Example: -->
-        {% for match in matched_goals %}
-            <p>
-                Goal 1 ID: {{ match.goal1_id }}, Goal 1: {{ match.goal1 }} <br>
-                Goal 2 ID: {{ match.goal2_id }}, Goal 2: {{ match.goal2 }}
-            </p>
-        {% endfor %}
-    </div>
-    {% endif %}
-</div>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+    <h1>Welcome to Our Application</h1>
+    <p>Data generation status: <span id="dataGenStatus">{{ is_generating_data }}</span></p>
+    <button id="startButton">Start data generation</button>
+    <button id="stopButton">Stop data generation</button>
+    <button id="clearButton">Clear database</button>
+    <div id="response">
+    </div>
+    <div>
+        <form id="userForm">
+            <label for="user_id">User ID:</label><br>
+            <select id="user_id" name="user_id">
+                {% for user_id in user_ids %}
+                    <option value="{{ user_id }}">{{ user_id }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Submit">
+        </form>
+        <h2>Matched Goals:</h2>
+        <h3 id="goalCount">Matched Goals Count: </h3>
+        <ul id="matchedGoalsList">
+            {% for goal in matched_goals %}
+                <li>{{ goal }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $("#startButton").click(function() {
+            $.post("/start", function(data, status) {
+                $("#response").html("Status: " + data.status);
+                $("#dataGenStatus").text("true");
+            });
+        });
+
+        $("#stopButton").click(function() {
+            $.post("/stop", function(data, status) {
+                $("#response").html("Status: " + data.status);
+                $("#dataGenStatus").text("false");
+            });
+        });
+
+        $("#clearButton").click(function() {
+            $.post("/clear", function(data, status) {
+                $("#response").html("Status: " + data.status);
+            });
+        });
+
+        $("#userForm").submit(function(e) {
+            e.preventDefault();
+            var userId = $("#user_id").val();
+            $.get("/compute_similarities/" + userId, function(data, status) {
+                var ul = $("#matchedGoalsList");
+                ul.empty();  // Remove old matched goals
+                data.matched_goals.forEach(function(goal) {
+                    var li = "<li>Goal1 ID: " + goal.goal1_id + ", Goal1: " + goal.goal1 +"<br> Goal2 ID: " + goal.goal2_id + ", Goal2: " + goal.goal2 + "</li>";
+                    ul.append(li);
+                });
+                   // Display the count
+                    $("#goalCount").text("Matched Goals Count: " + data.matched_goals.length);
+            });
+        });
+    });
+    </script>
+{% endblock %}

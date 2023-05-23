@@ -5,5 +5,6 @@ applications:
   path: ./
   buildpack: python_buildpack
   services:
-  - postgresql-db
+  - pg-instance-trial
+
 

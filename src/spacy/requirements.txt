@@ -9,3 +9,5 @@ opentelemetry-instrumentation-psycopg2
 psycopg2-binary
 scikit-learn
 spacy
+uvicorn
+fastapi
