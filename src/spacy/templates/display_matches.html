@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <table>
+        <tr>
+            <th>Goal 1 ID</th>
+            <th>Goal 1</th>
+            <th>Goal 2 ID</th>
+            <th>Goal 2</th>
+        </tr>
+        {% for match in matched_goals %}
+        <tr>
+            <td>{{ match.goal1_id }}</td>
+            <td>{{ match.goal1 }}</td>
+            <td>{{ match.goal2_id }}</td>
+            <td>{{ match.goal2 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- header information goes here -->
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Goals NLP Demo!</h1>
+        <p>Dup City!!</p>
+    <div>
+        <h1>Select a User</h1>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.user_id.label }}<br>
+                {{ form.user_id() }}
+            </p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
+    {% if matched_goals %}
+    <div>
+        <h1>Matched Goals</h1>
+        <!-- Display matched goals in your preferred way here. Example: -->
+        {% for match in matched_goals %}
+            <p>
+                Goal 1 ID: {{ match.goal1_id }}, Goal 1: {{ match.goal1 }} <br>
+                Goal 2 ID: {{ match.goal2_id }}, Goal 2: {{ match.goal2 }}
+            </p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
