@@ -1,0 +1,43 @@
+import os
+import json
+import psycopg2
+import psycopg2.extras
+import spacy
+from db import connect_to_db
+from sklearn.metrics.pairwise import cosine_similarity
+from cfenv import AppEnv
+
+# Attempt to load the model, install if it doesn't exist
+
+nlp = spacy.load('en_core_web_sm')
+
+ALPHA = 0.9
+
+def my_calc_similarity(user_id, list_of_goals, list_of_ids):
+    sentence_embeddings = [nlp(goal).vector for goal in list_of_goals]
+    sim_scores = cosine_similarity(sentence_embeddings)
+    match_goal_ids = [[] for x in range(len(list_of_goals))]
+    matched_goals = []
+    for j in range(len(list_of_goals)):
+        cur_sim_scores = sim_scores[j]
+        cur_sim_scores[j] = 0
+        cur_potential_idx = [i for i,v in enumerate(cur_sim_scores) if v > ALPHA]
+        for k in range(len(cur_potential_idx)):
+            match_goal_ids[j].append(list_of_ids[cur_potential_idx[k]])
+            if j > cur_potential_idx[k]:
+                continue
+            matched_goals.append({
+                "goal1_id": j, "goal1": list_of_goals[j],
+                "goal2_id": cur_potential_idx[k], "goal2": list_of_goals[cur_potential_idx[k]]
+            })
+    return matched_goals
+
+conn = connect_to_db()
+cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+cur.execute("SELECT * FROM public.goals;")
+rows = cur.fetchall()
+
+cur_goals_list = [row['goal'] for row in rows]
+cur_goal_ids = [row['id'] for row in rows]
+user_id = ''
+match_ids = my_calc_similarity(user_id, cur_goals_list, cur_goal_ids)

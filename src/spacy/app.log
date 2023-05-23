@@ -1,0 +1,36 @@
+2023-05-22 22:46:28,559:ERROR:Exception on /start [POST]
+Traceback (most recent call last):
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/src/spacy/server.py", line 36, in start_generating_data
+    data_gen_thread = Thread(target=data_generator)
+                      ^^^^^^
+NameError: name 'Thread' is not defined
+2023-05-22 22:46:34,078:ERROR:Exception on /start [POST]
+Traceback (most recent call last):
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/venv/lib/python3.11/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/patrickdeutsch/repos/kcirtapfromspace/cloudfoundry_circleci/src/spacy/server.py", line 36, in start_generating_data
+    data_gen_thread = Thread(target=data_generator)
+                      ^^^^^^
+NameError: name 'Thread' is not defined

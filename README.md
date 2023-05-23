@@ -215,3 +215,13 @@ gyrpe & sift are eazy to use locally, but challenges arise when trying to use th
 snyk is a good option but requires a paid account to use in a CI pipeline.
 trivy is a good option but requires a paid account to use in a CI pipeline.
 need to explore clair more. 
+
+
+## SPACY 
+docker run -rm -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres
+
+
+export VCAP_SERVICES='{"postgresql-db": [{"credentials": {"dbname": "postgres","hostname": "localhost","password": "postgres","port": "5432","username": "postgres","uri": "postgres://postgres:postgres@localhost:5432/postgres"}}]}'
+
+
+FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.6+ based on standard Python type hints. check out the docs page

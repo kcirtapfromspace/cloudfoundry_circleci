@@ -7,6 +7,27 @@ executors:
     working_directory: /tmp/workspace
 
 jobs:
+  buildpack:
+    executor: base-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Run Buildpack locally
+          command: |
+            cd src/bert
+            ls -la
+            docker run --rm \
+            --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+            buildpacksio/pack:latest build bert-base \
+              --builder paketobuildpacks/builder:base \
+              --buildpack paketo-buildpacks/python \
+              --volume $PWD:/app:ro
+              --path /app
+              --verbose
+              --env "BP_DEBUG=true"
+        # -v $PWD:/workspace -w /workspace \
   vendor_artifacts:
     docker:
       - image: cimg/python:3.11.3
@@ -19,7 +40,7 @@ jobs:
           name: Install Python dependencies
           command: |
             python3 -m pip install --upgrade pip
-            pip download torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu   -d vendor
+            pip download torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu  -d vendor
             pip download -r src/bert/requirements.txt -d vendor
       - run:
           name: Copy vendor folder
@@ -55,9 +76,16 @@ jobs:
             mkdir -p /tmp/artifacts/docker
             TAG="0.1.${CIRCLE_BUILD_NUM}"
             docker build --target artifact_build -t artifact_build_image:$TAG .
-            docker create --name temp-container artifact_build_image:$TAG
-            docker cp temp-container:/vendor /tmp/artifacts/docker/vendor
-            docker rm temp-container
+            docker create --name temp-vendor artifact_build_image:$TAG
+            docker cp temp-vendor:/vendor /tmp/artifacts/docker/vendor
+          # docker rm temp-container
+
+          # mkdir -p /tmp/artifacts/buildpack
+          # docker build --target buildpack -t buildpack:$TAG .
+          # docker create --name temp-buildpack buildpack:$TAG
+          # docker cp temp-buildpack:/artifacts /tmp/artifacts/buildpack/
+          # docker rm temp-buildpack
+
       - store_artifacts:
           path: /tmp/artifacts/docker
       - persist_to_workspace:
@@ -209,9 +237,10 @@ jobs:
       
 
 workflows:
-
   build_test_and_deploy:
     jobs:
+      
+      - buildpack
       - vendor_artifacts
       - build_bert_model
       - list_container_vulnerabilities:
