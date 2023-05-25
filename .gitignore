@@ -5,3 +5,4 @@ artifacts/**/
 .circleci/config.yml
 **/venv/**
 venv/**
+**/__pycache__/**
