@@ -79,7 +79,6 @@ jobs:
             docker create --name temp-vendor artifact_build_image:$TAG
             docker cp temp-vendor:/vendor /tmp/artifacts/docker/vendor
           # docker rm temp-container
-
           # mkdir -p /tmp/artifacts/buildpack
           # docker build --target buildpack -t buildpack:$TAG .
           # docker create --name temp-buildpack buildpack:$TAG
@@ -239,7 +238,6 @@ jobs:
 workflows:
   build_test_and_deploy:
     jobs:
-      
       - buildpack
       - vendor_artifacts
       - build_bert_model

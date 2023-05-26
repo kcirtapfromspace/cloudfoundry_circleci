@@ -1,14 +1,23 @@
 {% extends "base.html" %}
 <div class="background-element">
     <div class="mask-overlay">
-    <div class="content">
 
-{% block content %}
+        {% block content %}
+
+    <div id="profile">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button id="loginButton" class="btn btn-primary">Login</button>
+    <button id="logoutButton" class="btn btn-primary">Logout</button>
+    </div>
+
+    <div class="content">
     <h1>Duplicate Goals NLP Demo</h1>
     <p>Data generation status: <span id="dataGenStatus">{{ is_generating_data }}</span></p>
     <button id="startButton">Start data generation</button>
     <button id="stopButton">Stop data generation</button>
     <button id="clearButton">Clear database</button>
+    <!-- <div id="ticker"></div> -->
     <div id="response">
     </div>
     <div>
@@ -29,47 +38,7 @@
             {% endfor %}
         </ul>
     </div>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        $("#startButton").click(function() {
-            $.post("/start", function(data, status) {
-                $("#response").html("Status: " + data.status);
-                $("#dataGenStatus").text("true");
-            });
-        });
-
-        $("#stopButton").click(function() {
-            $.post("/stop", function(data, status) {
-                $("#response").html("Status: " + data.status);
-                $("#dataGenStatus").text("false");
-            });
-        });
-
-        $("#clearButton").click(function() {
-            $.post("/clear", function(data, status) {
-                $("#response").html("Status: " + data.status);
-            });
-        });
-
-        $("#userForm").submit(function(e) {
-            e.preventDefault();
-            var userId = $("#user_id").val();
-            $.get("/compute_similarities/" + userId, function(data, status) {
-                var ul = $("#matchedGoalsList");
-                ul.empty();  // Remove old matched goals
-                data.matched_goals.forEach(function(goal) {
-                    var li = "<li>Goal1 ID: " + goal.goal1_id + ", Goal1: " + goal.goal1 +"<br> Goal2 ID: " + goal.goal2_id + ", Goal2: " + goal.goal2 + "</li>";
-                    ul.append(li);
-                });
-                   // Display the count
-                    $("#goalCount").text("Matched Goals Count: " + data.matched_goals.length);
-            });
-        });
-    });
-    </script>
     </div>
+    {% endblock %}
 </div>
 </div>
-{% endblock %}

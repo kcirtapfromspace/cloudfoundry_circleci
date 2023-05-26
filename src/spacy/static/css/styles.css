@@ -1,6 +1,5 @@
 /* styles.css */
 
-/* Example font styles */
 body {
   font-family: 'Roboto', sans-serif;
 }
@@ -10,19 +9,16 @@ h1 {
   font-weight: bold;
 }
 
-/* Example gradient background */
 body {
   background: linear-gradient(to bottom, #ff8a00, #e52e71);
 }
 
-/* Example box shadow and border */
 .card {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   border: 1px solid #ccc;
 }
 
-/* Example hover animation */
 .button {
   transition: background-color 0.3s ease;
 }
@@ -31,36 +27,35 @@ body {
   background-color: #ff8a00;
 }
 
-/* Masking overlay */
+
+.background-element h1 {
+  color: #fff; 
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+}
+
+.background-element {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  height: 100vh;
+}
+
 .mask-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(111, 108, 108, 0.702); /* Adjust opacity and color as needed */
-  z-index: 1;
-}
-
-/* Adjust text styles */
-.background-element h1 {
-  color: #fff; /* Set a contrasting color */
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8); /* Add text shadow for better visibility */
-}
-/* styles.css */
-
-/* styles.css */
-
-/* Centering */
-.background-element {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  position: relative;
 }
 
 .content {
-  z-index: 2;
-  /* Add additional styles for content positioning and formatting */
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
 }

@@ -8,6 +8,10 @@ opentelemetry-instrumentation-flask
 opentelemetry-instrumentation-psycopg2
 psycopg2-binary
 scikit-learn
-spacy
+spaCy
 uvicorn
 fastapi
+python-jose
+bcrypt
+passlib
+Jinja2

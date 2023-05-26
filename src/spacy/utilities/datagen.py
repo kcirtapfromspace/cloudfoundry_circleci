@@ -1,13 +1,9 @@
 # math import e
-import os
 import random
-import json
 import string
 from cfenv import AppEnv
 from faker import Faker
-import psycopg2
-import psycopg2.extras
-from db import connect_to_db
+from .db import connect_to_db
 import uuid
 from time import sleep
 from threading import Thread, Event
@@ -19,6 +15,7 @@ Psycopg2Instrumentor().instrument()
 
 # Predefined goals
 predefined_goals = []
+is_generating_data = False
 
 # Counter for number of generated goals
 goal_counter = 0
@@ -93,3 +90,6 @@ def data_generator():
             sleep(1)
             num_iterations += 1
         print("Finished generating data!")
+        
+# Start the data generator in a new thread
+data_gen_thread = Thread(target=data_generator)
