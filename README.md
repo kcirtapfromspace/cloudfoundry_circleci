@@ -3,9 +3,7 @@
 
 ## Prerequisites
 ### Cloud Foundry CLI (SAP 90 day trial)
-Get a free trial account on SAP Cloud Platform
-https://developers.sap.com/tutorials/hcp-cre
-ate-trial-account.html
+Get a free trial account on [SAP Cloud Platform](https://developers.sap.com/tutorials/hcp-create-trial-account.html)
 
 Grab Cloud Foundry Envionment details
 API Endpoint: [https://api.cf.us10-001.hana.ondemand.com](https://api.cf.us10-001.hana.ondemand.com)
